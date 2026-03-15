@@ -1,0 +1,32 @@
+name: Weekly Deal Tracker
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"  # Every Monday at 8 AM UTC
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+
+jobs:
+  run-tracker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run home tracker
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          NOTIFICATION_METHOD: email
+        run: python home_tracker.py
