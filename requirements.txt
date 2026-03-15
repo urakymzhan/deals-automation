@@ -1,0 +1,10 @@
+playwright
+beautifulsoup4
+sqlalchemy
+apscheduler
+twilio
+python-dotenv
+requests
+flask
+gunicorn
+psycopg2-binary
