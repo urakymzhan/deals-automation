@@ -21,6 +21,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Setup home searches
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NOTIFICATION_METHOD: email
+        run: python setup_searches.py
+
       - name: Run home tracker
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
