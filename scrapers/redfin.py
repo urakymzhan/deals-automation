@@ -1,8 +1,7 @@
 import requests
 from typing import Optional
-from config import RAPIDAPI_KEY
+from config import RAPIDAPI_KEY, RAPIDAPI_HOST
 
-RAPIDAPI_HOST = "redfin-com-data.p.rapidapi.com"
 HEADERS = {
     "x-rapidapi-key": RAPIDAPI_KEY,
     "x-rapidapi-host": RAPIDAPI_HOST,
@@ -14,7 +13,7 @@ def get_region_id(zip_code: str) -> Optional[str]:
     """Convert a zip code to a Redfin regionId using autocomplete."""
     try:
         response = requests.get(
-            "https://redfin-com-data.p.rapidapi.com/properties/auto-complete",
+            f"https://{RAPIDAPI_HOST}/properties/auto-complete",
             headers=HEADERS,
             params={"query": zip_code},
             timeout=10,
@@ -67,7 +66,7 @@ def search_properties(
 
     try:
         response = requests.get(
-            "https://redfin-com-data.p.rapidapi.com/properties/search-sale",
+            f"https://{RAPIDAPI_HOST}/properties/search-sale",
             headers=HEADERS,
             params=params,
             timeout=15,

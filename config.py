@@ -22,5 +22,6 @@ CHECK_INTERVAL_MINUTES = int(os.getenv("CHECK_INTERVAL_MINUTES", "30"))
 # Notification method: "email" or "sms"
 NOTIFICATION_METHOD = os.getenv("NOTIFICATION_METHOD", "email")
 
-# RapidAPI (Zillow)
+# RapidAPI
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
+RAPIDAPI_HOST = os.getenv("RAPIDAPI_HOST", "")
