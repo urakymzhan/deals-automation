@@ -10,7 +10,7 @@ def index():
     session = Session()
 
     searches = session.query(HomeSearch).filter_by(active=True).order_by(HomeSearch.label).all()
-    active_tab = request.args.get("tab", str(searches[0].id) if searches else "all")
+    active_tab = request.args.get("tab", "all")
     sort = request.args.get("sort", "date")
 
     query = (
@@ -41,6 +41,20 @@ def index():
     elif sort == "dom_desc":
         listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else -1, reverse=True)
 
+    # Count unique listings per search (all listings, not filtered)
+    all_rows = (
+        session.query(PropertySnapshot, HomeSearch)
+        .join(HomeSearch, PropertySnapshot.search_id == HomeSearch.id)
+        .all()
+    )
+    seen_all = {}
+    for snapshot, search in all_rows:
+        if snapshot.zpid not in seen_all:
+            seen_all[snapshot.zpid] = search.id
+    counts = {}
+    for zpid, sid in seen_all.items():
+        counts[sid] = counts.get(sid, 0) + 1
+
     session.close()
     return render_template(
         "index.html",
@@ -48,6 +62,7 @@ def index():
         listings=listings,
         active_tab=active_tab,
         sort=sort,
+        counts=counts,
     )
 
 
