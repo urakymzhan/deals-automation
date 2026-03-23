@@ -8,7 +8,6 @@
   <style>
     body { background: #f0f2f5; margin: 0; }
 
-    /* Top bar */
     .topbar {
       background: #1a1a2e;
       padding: 14px 16px;
@@ -41,7 +40,6 @@
       padding: 1px 6px;
     }
 
-    /* Overlay */
     .overlay {
       display: none;
       position: fixed;
@@ -51,7 +49,6 @@
     }
     .overlay.open { display: block; }
 
-    /* Drawer */
     .drawer {
       position: fixed;
       top: 0;
@@ -100,8 +97,6 @@
       letter-spacing: 0.06em;
       margin-bottom: 10px;
     }
-
-    /* Area options */
     .area-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .area-option {
       display: block;
@@ -114,13 +109,7 @@
       font-weight: 500;
       text-align: center;
     }
-    .area-option.active {
-      background: #1a1a2e;
-      color: #fff;
-      border-color: #1a1a2e;
-    }
-
-    /* Active area pill in topbar */
+    .area-option.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
     .active-area-pill {
       background: rgba(255,255,255,0.15);
       border-radius: 20px;
@@ -130,7 +119,45 @@
       margin-left: 8px;
     }
 
-    /* Listings */
+    /* Sort + filter bar */
+    .sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #f0f2f5;
+      gap: 8px;
+    }
+    .sort-select {
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.83rem;
+      background: #fff;
+      color: #333;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+    .saved-filter-btn {
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.83rem;
+      background: #fff;
+      color: #555;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .saved-filter-btn.active {
+      background: #fff8e1;
+      border-color: #f57f17;
+      color: #f57f17;
+    }
+    .count-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+    /* Listing cards */
     .listings { padding: 12px 16px 80px; }
     .listing-card {
       background: #fff;
@@ -138,11 +165,13 @@
       padding: 16px;
       margin-bottom: 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      transition: opacity 0.2s;
     }
+    .listing-card.status-pass { opacity: 0.4; }
     .listing-card .address { font-weight: 600; font-size: 0.95rem; color: #1a1a2e; margin-bottom: 6px; }
     .listing-card .price { font-size: 1.2rem; font-weight: 700; color: #2e7d32; margin-bottom: 8px; }
     .listing-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: #555; margin-bottom: 10px; }
-    .listing-footer { display: flex; align-items: center; justify-content: space-between; }
+    .listing-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
     .dom-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
     .dom-new   { background: #e8f5e9; color: #2e7d32; }
     .dom-mid   { background: #fff8e1; color: #f57f17; }
@@ -167,27 +196,55 @@
       font-weight: 500;
       margin-bottom: 6px;
     }
-    .count-label { padding: 8px 16px 4px; font-size: 0.8rem; color: #888; }
     .area-count { font-size: 0.72rem; opacity: 0.7; font-weight: 400; }
-    .sort-bar {
+
+    /* Action buttons */
+    .action-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f2f5;
+    }
+    .action-btn {
+      flex: 1;
+      border: 1.5px solid #eee;
+      border-radius: 8px;
+      padding: 6px 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #fafafa;
+      color: #888;
+      cursor: pointer;
+      text-align: center;
+    }
+    .action-btn.active-save { background: #fce4ec; border-color: #e91e63; color: #e91e63; }
+    .action-btn.active-pass { background: #ffebee; border-color: #c62828; color: #c62828; }
+
+    .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
+    .pagination-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 16px;
-      background: #f0f2f5;
+      z-index: 100;
     }
-    .sort-select {
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 0.83rem;
+    .page-btn {
       background: #fff;
-      color: #333;
-      font-weight: 500;
-      outline: none;
-      cursor: pointer;
+      color: #1a1a2e;
+      border: 2px solid #1a1a2e;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
     }
-    .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
+    .page-btn.disabled { background: #fff; color: #ccc; border-color: #e0e0e0; pointer-events: none; }
+    .page-info { font-size: 0.85rem; color: #555; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -205,9 +262,7 @@
   </div>
   <button class="filter-btn" onclick="openDrawer()">
     ⚙ Filters
-    {% set active_sort = sort != 'date' %}
-    {% set active_area = active_tab != 'all' %}
-    {% if active_sort or active_area %}<span class="badge">●</span>{% endif %}
+    {% if active_tab != 'all' %}<span class="badge">●</span>{% endif %}
   </button>
 </div>
 
@@ -220,8 +275,6 @@
     <h6>Filters</h6>
     <button class="close-btn" onclick="closeDrawer()">✕</button>
   </div>
-
-  <!-- Area -->
   <div class="drawer-section">
     <div class="drawer-section-title">Area</div>
     <div class="area-options">
@@ -240,21 +293,30 @@
 
 <!-- Sort bar -->
 <div class="sort-bar">
-  <span class="count-label" style="padding:0">{{ listings|length }} listings</span>
+  <span class="count-label">{{ total }} listings</span>
+  <button class="saved-filter-btn" id="savedFilterBtn" onclick="toggleSavedFilter()">🔖 Saved</button>
   <select class="sort-select" onchange="window.location='?tab={{ active_tab }}&sort='+this.value">
     <option value="date"       {% if sort == 'date' %}selected{% endif %}>Latest</option>
-    <option value="price_asc"  {% if sort == 'price_asc' %}selected{% endif %}>Price: Low → High</option>
-    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High → Low</option>
-    <option value="dom_asc"    {% if sort == 'dom_asc' %}selected{% endif %}>Days: Low → High</option>
-    <option value="dom_desc"   {% if sort == 'dom_desc' %}selected{% endif %}>Days: High → Low</option>
+    <option value="price_asc"  {% if sort == 'price_asc' %}selected{% endif %}>Price ↑</option>
+    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price ↓</option>
+    <option value="dom_asc"    {% if sort == 'dom_asc' %}selected{% endif %}>Days ↑</option>
+    <option value="dom_desc"   {% if sort == 'dom_desc' %}selected{% endif %}>Days ↓</option>
   </select>
 </div>
 
 <!-- Listings -->
 {% if listings %}
-<div class="listings">
+<div class="listings" id="listingsContainer">
   {% for snapshot, search in listings %}
-  <div class="listing-card">
+  <div class="listing-card"
+       id="card-{{ snapshot.zpid }}"
+       data-zpid="{{ snapshot.zpid }}"
+       data-price="{{ snapshot.price or '' }}"
+       data-address="{{ snapshot.address or '' }}"
+       data-beds="{{ snapshot.beds or '' }}"
+       data-baths="{{ snapshot.baths or '' }}"
+       data-sqft="{{ snapshot.sqft or '' }}"
+       data-url="{{ snapshot.url or '' }}">
     <div class="area-tag">{{ search.label }}</div>
     <div class="address">{{ snapshot.address or 'Address unavailable' }}</div>
     <div class="price">
@@ -282,6 +344,11 @@
       <a href="{{ snapshot.url }}" target="_blank" class="view-btn">View →</a>
       {% endif %}
     </div>
+    <!-- Action buttons -->
+    <div class="action-bar">
+      <button class="action-btn" data-action="save" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">♥</button>
+      <button class="action-btn" data-action="pass" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">❌ Pass</button>
+    </div>
   </div>
   {% endfor %}
 </div>
@@ -293,7 +360,19 @@
 </div>
 {% endif %}
 
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="pagination-bar">
+  <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page - 1 }}"
+     class="page-btn {% if page <= 1 %}disabled{% endif %}">← Prev</a>
+  <span class="page-info">{{ page }} / {{ total_pages }}</span>
+  <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page + 1 }}"
+     class="page-btn {% if page >= total_pages %}disabled{% endif %}">Next →</a>
+</div>
+{% endif %}
+
 <script>
+  // ── Drawer ──────────────────────────────────────────
   function openDrawer() {
     document.getElementById('drawer').classList.add('open');
     document.getElementById('overlay').classList.add('open');
@@ -302,10 +381,80 @@
     document.getElementById('drawer').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
   }
-  // Auto-close drawer after selecting a filter
-  document.querySelectorAll('.sort-option, .area-option').forEach(el => {
-    el.addEventListener('click', () => closeDrawer());
-  });
+  document.querySelectorAll('.area-option').forEach(el =>
+    el.addEventListener('click', closeDrawer)
+  );
+
+  // ── localStorage status ─────────────────────────────
+  const STATUS_KEY = 'deal_status';
+
+  function getStatuses() {
+    return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}');
+  }
+
+  function setStatus(btn) {
+    const zpid   = btn.dataset.zpid;
+    const action = btn.dataset.action;
+    const statuses = getStatuses();
+    const current  = statuses[zpid];
+
+    // Toggle off if same action clicked again
+    if (current === action) {
+      delete statuses[zpid];
+    } else {
+      statuses[zpid] = action;
+    }
+    localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
+    applyStatuses();
+  }
+
+  function applyStatuses() {
+    const statuses = getStatuses();
+    const showSavedOnly = localStorage.getItem('savedFilter') === 'on';
+
+    document.querySelectorAll('.listing-card').forEach(card => {
+      const zpid   = card.dataset.zpid;
+      const status = statuses[zpid];
+
+      // Reset button styles
+      card.querySelectorAll('.action-btn').forEach(btn => {
+        btn.classList.remove('active-save', 'active-interested', 'active-pass');
+      });
+
+      // Apply active style to current status button
+      if (status) {
+        const activeBtn = card.querySelector(`[data-action="${status}"]`);
+        if (activeBtn) activeBtn.classList.add(`active-${status}`);
+      }
+
+      // Apply pass dimming
+      card.classList.toggle('status-pass', status === 'pass');
+
+      // Saved filter — hide cards that aren't saved/interested
+      if (showSavedOnly) {
+        card.style.display = status === 'save' ? '' : 'none';
+      } else {
+        card.style.display = '';
+      }
+    });
+  }
+
+  // ── Saved filter toggle ─────────────────────────────
+  function toggleSavedFilter() {
+    const current = localStorage.getItem('savedFilter');
+    localStorage.setItem('savedFilter', current === 'on' ? 'off' : 'on');
+    updateSavedBtn();
+    applyStatuses();
+  }
+
+  function updateSavedBtn() {
+    const btn = document.getElementById('savedFilterBtn');
+    if (btn) btn.classList.toggle('active', localStorage.getItem('savedFilter') === 'on');
+  }
+
+  // ── Init on page load ───────────────────────────────
+  updateSavedBtn();
+  applyStatuses();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
