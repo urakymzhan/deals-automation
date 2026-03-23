@@ -12,6 +12,7 @@ def index():
     searches = session.query(HomeSearch).filter_by(active=True).order_by(HomeSearch.label).all()
     active_tab = request.args.get("tab", "all")
     sort = request.args.get("sort", "date")
+    page = max(1, int(request.args.get("page", 1)))
 
     query = (
         session.query(PropertySnapshot, HomeSearch)
@@ -41,6 +42,13 @@ def index():
     elif sort == "dom_desc":
         listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else -1, reverse=True)
 
+    # Paginate
+    per_page = 20
+    total = len(listings)
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    page = min(page, total_pages)
+    listings = listings[(page - 1) * per_page: page * per_page]
+
     # Count unique listings per search (all listings, not filtered)
     all_rows = (
         session.query(PropertySnapshot, HomeSearch)
@@ -63,6 +71,9 @@ def index():
         active_tab=active_tab,
         sort=sort,
         counts=counts,
+        page=page,
+        total_pages=total_pages,
+        total=total,
     )
 
 
