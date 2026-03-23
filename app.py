@@ -11,8 +11,8 @@ def index():
 
     searches = session.query(HomeSearch).filter_by(active=True).order_by(HomeSearch.label).all()
     active_tab = request.args.get("tab", str(searches[0].id) if searches else "all")
+    sort = request.args.get("sort", "date")
 
-    # Build listings query
     query = (
         session.query(PropertySnapshot, HomeSearch)
         .join(HomeSearch, PropertySnapshot.search_id == HomeSearch.id)
@@ -31,15 +31,26 @@ def index():
             seen.add(snapshot.zpid)
             listings.append((snapshot, search))
 
+    # Sort after deduplication
+    if sort == "price_asc":
+        listings.sort(key=lambda x: x[0].price or float("inf"))
+    elif sort == "price_desc":
+        listings.sort(key=lambda x: x[0].price or 0, reverse=True)
+    elif sort == "dom_asc":
+        listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else float("inf"))
+    elif sort == "dom_desc":
+        listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else -1, reverse=True)
+
     session.close()
     return render_template(
         "index.html",
         searches=searches,
         listings=listings,
         active_tab=active_tab,
+        sort=sort,
     )
 
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    app.run(debug=True, port=8080)

@@ -4,3 +4,7 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
+
+# My files
+PLAN.md
+URLS.md
