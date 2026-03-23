@@ -6,8 +6,9 @@
   <title>Deal Finder</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <style>
-    body { background: #f0f2f5; }
+    body { background: #f0f2f5; margin: 0; }
 
+    /* Top bar */
     .topbar {
       background: #1a1a2e;
       padding: 14px 16px;
@@ -16,62 +17,121 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
     }
     .topbar-title { color: #fff; font-weight: 700; font-size: 1.1rem; }
     .topbar-sub { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
-
-    /* Scrollable tab bar */
-    .tab-scroll {
-      display: flex;
-      overflow-x: auto;
-      gap: 8px;
-      padding: 12px 16px;
-      background: #fff;
-      border-bottom: 1px solid #e0e0e0;
-      scrollbar-width: none;
-    }
-    .tab-scroll::-webkit-scrollbar { display: none; }
-    .tab-btn {
-      white-space: nowrap;
+    .filter-btn {
+      background: rgba(255,255,255,0.15);
       border: none;
-      border-radius: 20px;
-      padding: 6px 16px;
+      border-radius: 8px;
+      color: #fff;
+      padding: 7px 14px;
       font-size: 0.85rem;
       font-weight: 500;
-      background: #f0f2f5;
-      color: #555;
-      text-decoration: none;
-      flex-shrink: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .tab-btn.active {
+    .filter-btn .badge {
+      background: #e53935;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      padding: 1px 6px;
+    }
+
+    /* Overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 300;
+    }
+    .overlay.open { display: block; }
+
+    /* Drawer */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: #fff;
+      z-index: 400;
+      transition: right 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .drawer.open { right: 0; }
+    .drawer-header {
+      padding: 18px 16px 12px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+    }
+    .drawer-header h6 { margin: 0; font-weight: 700; font-size: 1rem; color: #1a1a2e; }
+    .close-btn {
+      background: #f0f2f5;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+    }
+    .drawer-section { padding: 16px; border-bottom: 1px solid #f0f2f5; }
+    .drawer-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    /* Area options */
+    .area-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .area-option {
+      display: block;
+      padding: 9px 8px;
+      border-radius: 10px;
+      border: 1.5px solid #eee;
+      font-size: 0.8rem;
+      color: #444;
+      text-decoration: none;
+      font-weight: 500;
+      text-align: center;
+    }
+    .area-option.active {
       background: #1a1a2e;
       color: #fff;
+      border-color: #1a1a2e;
     }
 
-    /* Stats row */
-    .stats-row {
-      display: flex;
-      gap: 10px;
-      padding: 12px 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
+    /* Active area pill in topbar */
+    .active-area-pill {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.85);
+      margin-left: 8px;
     }
-    .stats-row::-webkit-scrollbar { display: none; }
-    .stat-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 10px 16px;
-      text-align: center;
-      min-width: 90px;
-      flex-shrink: 0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
-    .stat-card .num { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; }
-    .stat-card .lbl { font-size: 0.7rem; color: #888; margin-top: 2px; }
 
-    /* Listing cards */
-    .listings { padding: 0 16px 80px; }
+    /* Listings */
+    .listings { padding: 12px 16px 80px; }
     .listing-card {
       background: #fff;
       border-radius: 14px;
@@ -79,42 +139,14 @@
       margin-bottom: 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     }
-    .listing-card .address {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #1a1a2e;
-      margin-bottom: 6px;
-    }
-    .listing-card .price {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #2e7d32;
-      margin-bottom: 8px;
-    }
-    .listing-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 10px;
-    }
-    .meta-item { display: flex; align-items: center; gap: 3px; }
-    .listing-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .dom-badge {
-      font-size: 0.75rem;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-    .dom-new { background: #e8f5e9; color: #2e7d32; }
-    .dom-mid { background: #fff8e1; color: #f57f17; }
+    .listing-card .address { font-weight: 600; font-size: 0.95rem; color: #1a1a2e; margin-bottom: 6px; }
+    .listing-card .price { font-size: 1.2rem; font-weight: 700; color: #2e7d32; margin-bottom: 8px; }
+    .listing-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: #555; margin-bottom: 10px; }
+    .listing-footer { display: flex; align-items: center; justify-content: space-between; }
+    .dom-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .dom-new   { background: #e8f5e9; color: #2e7d32; }
+    .dom-mid   { background: #fff8e1; color: #f57f17; }
     .dom-stale { background: #ffebee; color: #c62828; }
-
     .view-btn {
       background: #1a1a2e;
       color: #fff;
@@ -135,36 +167,27 @@
       font-weight: 500;
       margin-bottom: 6px;
     }
-    .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
-    .count-label { padding: 4px 16px 4px; font-size: 0.8rem; color: #888; }
+    .count-label { padding: 8px 16px 4px; font-size: 0.8rem; color: #888; }
+    .area-count { font-size: 0.72rem; opacity: 0.7; font-weight: 400; }
     .sort-bar {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      justify-content: space-between;
+      padding: 8px 16px;
       background: #f0f2f5;
     }
-    .sort-bar::-webkit-scrollbar { display: none; }
-    .sort-label { font-size: 0.78rem; color: #888; white-space: nowrap; }
-    .sort-btn {
-      white-space: nowrap;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.78rem;
-      font-weight: 500;
+    .sort-select {
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.83rem;
       background: #fff;
-      color: #555;
-      text-decoration: none;
-      flex-shrink: 0;
+      color: #333;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
     }
-    .sort-btn.active {
-      background: #1a1a2e;
-      color: #fff;
-      border-color: #1a1a2e;
-    }
+    .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
   </style>
 </head>
 <body>
@@ -172,49 +195,63 @@
 <!-- Top bar -->
 <div class="topbar">
   <div>
-    <div class="topbar-title">🏠 Deal Finder</div>
-    <div class="topbar-sub">Chicago Suburbs · Under $300K</div>
+    <div class="topbar-title">
+      🏠 Deal Finder
+      {% if active_tab != 'all' %}
+        {% for s in searches %}{% if s.id|string == active_tab %}<span class="active-area-pill">{{ s.label.replace(' flips','') }}</span>{% endif %}{% endfor %}
+      {% endif %}
+    </div>
+    <div class="topbar-sub">Illinois · Under $300K</div>
   </div>
-  <div class="topbar-sub">Updated weekly</div>
+  <button class="filter-btn" onclick="openDrawer()">
+    ⚙ Filters
+    {% set active_sort = sort != 'date' %}
+    {% set active_area = active_tab != 'all' %}
+    {% if active_sort or active_area %}<span class="badge">●</span>{% endif %}
+  </button>
 </div>
 
-<!-- Tab bar -->
-<div class="tab-scroll">
-  <a href="/?tab=all" class="tab-btn {% if active_tab == 'all' %}active{% endif %}">All Areas</a>
-  {% for search in searches %}
-  <a href="/?tab={{ search.id }}" class="tab-btn {% if active_tab == search.id|string %}active{% endif %}">
-    {{ search.label.replace(' flips', '') }}
-  </a>
-  {% endfor %}
-</div>
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
 
-<!-- Stats -->
-<div class="stats-row">
-  {% for search in searches %}
-  {% if active_tab == 'all' or active_tab == search.id|string %}
-  <div class="stat-card">
-    <div class="num">{{ listings | selectattr('0.search_id', 'equalto', search.id) | list | length }}</div>
-    <div class="lbl">{{ search.label.replace(' flips', '') }}</div>
+<!-- Drawer -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h6>Filters</h6>
+    <button class="close-btn" onclick="closeDrawer()">✕</button>
   </div>
-  {% endif %}
-  {% endfor %}
+
+  <!-- Area -->
+  <div class="drawer-section">
+    <div class="drawer-section-title">Area</div>
+    <div class="area-options">
+      <a href="?tab=all&sort={{ sort }}" class="area-option {% if active_tab == 'all' %}active{% endif %}">
+        🗺 All<br><span class="area-count">{{ counts.values()|sum }}</span>
+      </a>
+      {% for search in searches %}
+      <a href="?tab={{ search.id }}&sort={{ sort }}" class="area-option {% if active_tab == search.id|string %}active{% endif %}">
+        {{ search.label.replace(' flips', '') }}<br>
+        <span class="area-count">{{ counts.get(search.id, 0) }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 <!-- Sort bar -->
-{% if listings %}
 <div class="sort-bar">
-  <span class="sort-label">Sort by:</span>
-  <a href="?tab={{ active_tab }}&sort=date"       class="sort-btn {% if sort == 'date' %}active{% endif %}">Latest</a>
-  <a href="?tab={{ active_tab }}&sort=price_asc"  class="sort-btn {% if sort == 'price_asc' %}active{% endif %}">Price ↑</a>
-  <a href="?tab={{ active_tab }}&sort=price_desc" class="sort-btn {% if sort == 'price_desc' %}active{% endif %}">Price ↓</a>
-  <a href="?tab={{ active_tab }}&sort=dom_asc"    class="sort-btn {% if sort == 'dom_asc' %}active{% endif %}">Days ↑</a>
-  <a href="?tab={{ active_tab }}&sort=dom_desc"   class="sort-btn {% if sort == 'dom_desc' %}active{% endif %}">Days ↓</a>
+  <span class="count-label" style="padding:0">{{ listings|length }} listings</span>
+  <select class="sort-select" onchange="window.location='?tab={{ active_tab }}&sort='+this.value">
+    <option value="date"       {% if sort == 'date' %}selected{% endif %}>Latest</option>
+    <option value="price_asc"  {% if sort == 'price_asc' %}selected{% endif %}>Price: Low → High</option>
+    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High → Low</option>
+    <option value="dom_asc"    {% if sort == 'dom_asc' %}selected{% endif %}>Days: Low → High</option>
+    <option value="dom_desc"   {% if sort == 'dom_desc' %}selected{% endif %}>Days: High → Low</option>
+  </select>
 </div>
-{% endif %}
 
 <!-- Listings -->
 {% if listings %}
-<div class="count-label">{{ listings|length }} listings</div>
 <div class="listings">
   {% for snapshot, search in listings %}
   <div class="listing-card">
@@ -224,16 +261,10 @@
       {% if snapshot.price %}${{ "{:,.0f}".format(snapshot.price) }}{% else %}Price N/A{% endif %}
     </div>
     <div class="listing-meta">
-      {% if snapshot.beds %}
-      <span class="meta-item">🛏 {{ snapshot.beds }} bed</span>
-      {% endif %}
-      {% if snapshot.baths %}
-      <span class="meta-item">🚿 {{ snapshot.baths }} bath</span>
-      {% endif %}
-      {% if snapshot.sqft %}
-      <span class="meta-item">📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>
-      {% endif %}
-      <span class="meta-item">📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
+      {% if snapshot.beds %}<span>🛏 {{ snapshot.beds }} bed</span>{% endif %}
+      {% if snapshot.baths %}<span>🚿 {{ snapshot.baths }} bath</span>{% endif %}
+      {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
+      <span>📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
     </div>
     <div class="listing-footer">
       <div>
@@ -258,9 +289,24 @@
 {% else %}
 <div class="no-results">
   <div style="font-size:3rem">🏡</div>
-  <div class="mt-2">No listings found.<br>Run <code>home_tracker.py</code> to fetch deals.</div>
+  <div class="mt-2">No listings found for this area.</div>
 </div>
 {% endif %}
+
+<script>
+  function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+  // Auto-close drawer after selecting a filter
+  document.querySelectorAll('.sort-option, .area-option').forEach(el => {
+    el.addEventListener('click', () => closeDrawer());
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
