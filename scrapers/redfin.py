@@ -144,6 +144,11 @@ def parse_property(prop: dict, search_id: int) -> dict:
     if url and not url.startswith("http"):
         url = f"https://www.redfin.com{url}"
 
+    photos = home.get("photos", {})
+    big_photos = photos.get("bigPhotos", [])
+    small_photos = photos.get("smallPhotos", [])
+    photo_url = big_photos[0] if big_photos else (small_photos[0] if small_photos else None)
+
     return {
         "search_id": search_id,
         "zpid": listing_id,
@@ -154,4 +159,5 @@ def parse_property(prop: dict, search_id: int) -> dict:
         "sqft": sqft,
         "days_on_market": dom,
         "url": url,
+        "photo_url": photo_url,
     }
