@@ -65,8 +65,23 @@ class PropertySnapshot(Base):
     sqft = Column(Float, nullable=True)
     days_on_market = Column(Integer, nullable=True)
     url = Column(String, nullable=True)
+    arv_estimate = Column(Float, nullable=True)      # After Repair Value estimate
+    estimated_profit = Column(Float, nullable=True)  # ARV - price - rehab
     recorded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 def init_db():
     Base.metadata.create_all(engine)
+    # Add new columns to existing tables if they don't exist yet (safe to run repeatedly)
+    with engine.connect() as conn:
+        for col in ("arv_estimate", "estimated_profit"):
+            try:
+                conn.execute(
+                    __import__("sqlalchemy").text(
+                        f"ALTER TABLE property_snapshots ADD COLUMN {col} FLOAT"
+                    )
+                )
+                conn.commit()
+                print(f"[DB] Added column: {col}")
+            except Exception:
+                pass  # column already exists

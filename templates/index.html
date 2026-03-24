@@ -221,6 +221,21 @@
     .action-btn.active-save { background: #fce4ec; border-color: #e91e63; color: #e91e63; }
     .action-btn.active-pass { background: #ffebee; border-color: #c62828; color: #c62828; }
 
+    .arv-box {
+      background: #f1f8e9;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+    }
+    .arv-box .arv-item { color: #555; }
+    .arv-box .arv-item strong { color: #2e7d32; }
+    .arv-box .profit-positive { color: #2e7d32; font-weight: 700; }
+    .arv-box .profit-negative { color: #c62828; font-weight: 700; }
+
     .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
     .pagination-bar {
       position: fixed;
@@ -328,6 +343,22 @@
       {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
       <span>📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
     </div>
+    {% if snapshot.arv_estimate %}
+    <div class="arv-box">
+      <div class="arv-item">ARV <strong>${{ "{:,.0f}".format(snapshot.arv_estimate) }}</strong></div>
+      {% if snapshot.estimated_profit is not none %}
+      <div class="arv-item">
+        Est. Profit
+        {% if snapshot.estimated_profit >= 0 %}
+          <span class="profit-positive">+${{ "{:,.0f}".format(snapshot.estimated_profit) }}</span>
+        {% else %}
+          <span class="profit-negative">-${{ "{:,.0f}".format(snapshot.estimated_profit|abs) }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="arv-item" style="color:#aaa">rehab est. $30/sqft</div>
+    </div>
+    {% endif %}
     <div class="listing-footer">
       <div>
         {% if snapshot.days_on_market is not none %}

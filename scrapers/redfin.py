@@ -45,13 +45,15 @@ def search_properties(
     max_price: Optional[float] = None,
     min_beds: Optional[int] = None,
     min_baths: Optional[float] = None,
+    region_id: Optional[str] = None,
 ) -> list[dict]:
     """Search Redfin for for-sale listings in a zip code."""
     if not RAPIDAPI_KEY:
         print("[Redfin] RAPIDAPI_KEY not set. Skipping.")
         return []
 
-    region_id = get_region_id(zip_code)
+    if not region_id:
+        region_id = get_region_id(zip_code)
     if not region_id:
         print(f"[Redfin] Could not find regionId for zip {zip_code}")
         return []
@@ -77,6 +79,48 @@ def search_properties(
     except Exception as e:
         print(f"[Redfin] Error searching {zip_code}: {e}")
         return []
+
+
+def search_sold(zip_code: str) -> list[dict]:
+    """Fetch recently sold properties for a zip code (used for ARV comps)."""
+    if not RAPIDAPI_KEY:
+        return []
+
+    region_id = get_region_id(zip_code)
+    if not region_id:
+        print(f"[Redfin] Could not find regionId for sold search in zip {zip_code}")
+        return []
+
+    try:
+        response = requests.get(
+            f"https://{RAPIDAPI_HOST}/properties/search-sold",
+            headers=HEADERS,
+            params={"regionId": region_id},
+            timeout=15,
+        )
+        response.raise_for_status()
+        return response.json().get("data", [])
+    except Exception as e:
+        print(f"[Redfin] Error fetching sold data for {zip_code}: {e}")
+        return []
+
+
+def calc_arv_comps(sold_props: list[dict]) -> Optional[float]:
+    """Calculate average price per sqft from sold comps. Returns None if insufficient data."""
+    price_per_sqft = []
+    for prop in sold_props:
+        home = prop.get("homeData", {})
+        price_raw = home.get("priceInfo", {}).get("amount")
+        sqft_raw = home.get("sqftInfo", {}).get("amount")
+        if price_raw and sqft_raw:
+            try:
+                ppsf = float(price_raw) / float(sqft_raw)
+                price_per_sqft.append(ppsf)
+            except (ValueError, ZeroDivisionError):
+                pass
+    if len(price_per_sqft) < 3:
+        return None
+    return sum(price_per_sqft) / len(price_per_sqft)
 
 
 def parse_property(prop: dict, search_id: int) -> dict:
