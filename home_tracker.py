@@ -59,6 +59,17 @@ def check_all_home_searches():
                 if parsed["days_on_market"] > search.max_days_on_market:
                     continue
 
+            # Detect price drop vs previous snapshot for this property
+            if parsed.get("price"):
+                prev = (
+                    session.query(PropertySnapshot)
+                    .filter_by(zpid=parsed["zpid"])
+                    .order_by(PropertySnapshot.recorded_at.desc())
+                    .first()
+                )
+                if prev and prev.price and parsed["price"] < prev.price:
+                    parsed["price_drop"] = round(prev.price - parsed["price"])
+
             # Calculate ARV and estimated profit if we have comps and sqft
             if avg_ppsf and parsed.get("sqft"):
                 arv = avg_ppsf * parsed["sqft"]

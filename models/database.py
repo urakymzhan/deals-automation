@@ -65,22 +65,29 @@ class PropertySnapshot(Base):
     sqft = Column(Float, nullable=True)
     days_on_market = Column(Integer, nullable=True)
     url = Column(String, nullable=True)
+    photo_url = Column(String, nullable=True)        # primary listing photo
     arv_estimate = Column(Float, nullable=True)      # After Repair Value estimate
     estimated_profit = Column(Float, nullable=True)  # ARV - price - rehab
+    price_drop = Column(Float, nullable=True)        # drop from previous snapshot (null if no drop)
     recorded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 def init_db():
     Base.metadata.create_all(engine)
     # Add new columns to existing tables if they don't exist yet (safe to run repeatedly)
-    with engine.connect() as conn:
-        for col in ("arv_estimate", "estimated_profit"):
+    import sqlalchemy
+    new_cols = [
+        ("photo_url", "TEXT"),
+        ("arv_estimate", "FLOAT"),
+        ("estimated_profit", "FLOAT"),
+        ("price_drop", "FLOAT"),
+    ]
+    for col, col_type in new_cols:
+        with engine.connect() as conn:
             try:
-                conn.execute(
-                    __import__("sqlalchemy").text(
-                        f"ALTER TABLE property_snapshots ADD COLUMN {col} FLOAT"
-                    )
-                )
+                conn.execute(sqlalchemy.text(
+                    f"ALTER TABLE property_snapshots ADD COLUMN {col} {col_type}"
+                ))
                 conn.commit()
                 print(f"[DB] Added column: {col}")
             except Exception:
