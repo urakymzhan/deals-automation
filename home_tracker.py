@@ -1,6 +1,9 @@
+import time
 from models import HomeSearch, PropertySnapshot, Session, init_db
-from scrapers.redfin import search_properties, parse_property
+from scrapers.redfin import search_properties, search_sold, calc_arv_comps, parse_property
 from notifiers import notify
+
+REHAB_COST_PER_SQFT = 30  # light rehab default
 
 
 def check_all_home_searches():
@@ -20,6 +23,14 @@ def check_all_home_searches():
         if not props:
             print(f"[HomeTracker] No results for {search.zip_code}")
             continue
+
+        # Fetch sold comps for ARV calculation
+        sold = search_sold(search.zip_code)
+        avg_ppsf = calc_arv_comps(sold)
+        if avg_ppsf:
+            print(f"[HomeTracker] ARV comps: {len(sold)} sold, avg ${avg_ppsf:.0f}/sqft")
+        else:
+            print(f"[HomeTracker] Not enough sold comps for ARV in {search.zip_code}")
 
         # Get zpids we've already seen for this search
         seen_zpids = {
@@ -48,6 +59,14 @@ def check_all_home_searches():
                 if parsed["days_on_market"] > search.max_days_on_market:
                     continue
 
+            # Calculate ARV and estimated profit if we have comps and sqft
+            if avg_ppsf and parsed.get("sqft"):
+                arv = avg_ppsf * parsed["sqft"]
+                rehab = parsed["sqft"] * REHAB_COST_PER_SQFT
+                profit = arv - (parsed["price"] or 0) - rehab
+                parsed["arv_estimate"] = round(arv)
+                parsed["estimated_profit"] = round(profit)
+
             snapshot = PropertySnapshot(**parsed)
             session.add(snapshot)
 
@@ -56,27 +75,29 @@ def check_all_home_searches():
 
         session.commit()
 
-        # Send a single digest email for all new listings
-        if new_listings:
-            lines = []
-            for p in new_listings:
-                price_str = f"${p['price']:,.0f}" if p["price"] else "N/A"
-                beds = p["beds"] or "?"
-                baths = p["baths"] or "?"
-                sqft = f"{p['sqft']:,.0f} sqft" if p["sqft"] else "N/A"
-                dom = f"{p['days_on_market']} days on market" if p["days_on_market"] is not None else ""
-                lines.append(
-                    f"{p['address']}\n"
-                    f"  Price: {price_str} | {beds}bd/{baths}ba | {sqft} {dom}\n"
-                    f"  {p['url']}\n"
-                )
-
-            notify(
-                subject=f"Deal Digest [{search.label}]: {len(new_listings)} new listings",
-                body="\n".join(lines),
-            )
+        # Email digest — commented out until Gmail credentials are fixed
+        # if new_listings:
+        #     lines = []
+        #     for p in new_listings:
+        #         price_str = f"${p['price']:,.0f}" if p["price"] else "N/A"
+        #         beds = p["beds"] or "?"
+        #         baths = p["baths"] or "?"
+        #         sqft = f"{p['sqft']:,.0f} sqft" if p["sqft"] else "N/A"
+        #         dom = f"{p['days_on_market']} days on market" if p["days_on_market"] is not None else ""
+        #         arv_str = f"  ARV: ${p['arv_estimate']:,.0f} | Est. Profit: ${p['estimated_profit']:,.0f}\n" if p.get("arv_estimate") else ""
+        #         lines.append(
+        #             f"{p['address']}\n"
+        #             f"  Price: {price_str} | {beds}bd/{baths}ba | {sqft} {dom}\n"
+        #             f"{arv_str}"
+        #             f"  {p['url']}\n"
+        #         )
+        #     notify(
+        #         subject=f"Deal Digest [{search.label}]: {len(new_listings)} new listings",
+        #         body="\n".join(lines),
+        #     )
 
         print(f"[HomeTracker] {len(props)} listings found, {len(new_listings)} new.")
+        time.sleep(1)  # avoid per-second rate limits between zips
 
     session.close()
 
