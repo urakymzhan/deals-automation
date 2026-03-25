@@ -144,6 +144,18 @@ def parse_property(prop: dict, search_id: int) -> dict:
     if url and not url.startswith("http"):
         url = f"https://www.redfin.com{url}"
 
+    property_type_map = {
+        2:  "Condo",
+        3:  "Condo",
+        4:  "Multi-Family",
+        5:  "Multi-Family 5+",
+        6:  "Single Family",
+        8:  "Land",
+        10: "Townhouse",
+        13: "Single Family",
+    }
+    property_type = property_type_map.get(home.get("propertyType"), "Other")
+
     photos = home.get("photos", {})
     big_photos = photos.get("bigPhotos", [])
     small_photos = photos.get("smallPhotos", [])
@@ -160,4 +172,5 @@ def parse_property(prop: dict, search_id: int) -> dict:
         "days_on_market": dom,
         "url": url,
         "photo_url": photo_url,
+        "property_type": property_type,
     }

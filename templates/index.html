@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deal Finder</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body { background: #f0f2f5; margin: 0; }
+    body {
+      background: #f0f2f5;
+      margin: 0;
+    }
 
     .topbar {
       background: #1a1a2e;
@@ -18,10 +22,21 @@
       top: 0;
       z-index: 200;
     }
-    .topbar-title { color: #fff; font-weight: 700; font-size: 1.1rem; }
-    .topbar-sub { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+
+    .topbar-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+
+    .topbar-sub {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.75rem;
+    }
+
     .filter-btn {
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       border-radius: 8px;
       color: #fff;
@@ -33,6 +48,7 @@
       align-items: center;
       gap: 6px;
     }
+
     .filter-btn .badge {
       background: #e53935;
       border-radius: 10px;
@@ -44,10 +60,13 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0, 0, 0, 0.4);
       z-index: 300;
     }
-    .overlay.open { display: block; }
+
+    .overlay.open {
+      display: block;
+    }
 
     .drawer {
       position: fixed;
@@ -62,7 +81,11 @@
       flex-direction: column;
       overflow-y: auto;
     }
-    .drawer.open { right: 0; }
+
+    .drawer.open {
+      right: 0;
+    }
+
     .drawer-header {
       padding: 18px 16px 12px;
       border-bottom: 1px solid #eee;
@@ -74,7 +97,14 @@
       background: #fff;
       z-index: 1;
     }
-    .drawer-header h6 { margin: 0; font-weight: 700; font-size: 1rem; color: #1a1a2e; }
+
+    .drawer-header h6 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #1a1a2e;
+    }
+
     .close-btn {
       background: #f0f2f5;
       border: none;
@@ -88,7 +118,12 @@
       justify-content: center;
       color: #555;
     }
-    .drawer-section { padding: 16px; border-bottom: 1px solid #f0f2f5; }
+
+    .drawer-section {
+      padding: 16px;
+      border-bottom: 1px solid #f0f2f5;
+    }
+
     .drawer-section-title {
       font-size: 0.72rem;
       font-weight: 700;
@@ -97,10 +132,19 @@
       letter-spacing: 0.06em;
       margin-bottom: 10px;
     }
-    .area-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .area-options {
+      /* display: grid; grid-template-columns: 1fr 1fr; gap: 8px;  */
+
+    }
+
     .area-option {
-      display: block;
+      /* display: flex;
+      justify-content: space-between; */
+      display: inline-block;
+      width: fit-content;
       padding: 9px 8px;
+      margin-bottom: 5px;
       border-radius: 10px;
       border: 1.5px solid #eee;
       font-size: 0.8rem;
@@ -109,13 +153,19 @@
       font-weight: 500;
       text-align: center;
     }
-    .area-option.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+
+    .area-option.active {
+      background: #1a1a2e;
+      color: #fff;
+      border-color: #1a1a2e;
+    }
+
     .active-area-pill {
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 20px;
       padding: 3px 10px;
       font-size: 0.75rem;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255, 255, 255, 0.85);
       margin-left: 8px;
     }
 
@@ -128,6 +178,7 @@
       background: #f0f2f5;
       gap: 8px;
     }
+
     .sort-select {
       border: 1.5px solid #ddd;
       border-radius: 8px;
@@ -139,6 +190,7 @@
       outline: none;
       cursor: pointer;
     }
+
     .saved-filter-btn {
       border: 1.5px solid #ddd;
       border-radius: 8px;
@@ -150,15 +202,24 @@
       cursor: pointer;
       white-space: nowrap;
     }
+
     .saved-filter-btn.active {
       background: #fff8e1;
       border-color: #f57f17;
       color: #f57f17;
     }
-    .count-label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+
+    .count-label {
+      font-size: 0.8rem;
+      color: #888;
+      white-space: nowrap;
+    }
 
     /* Listing cards */
-    .listings { padding: 12px 16px 80px; }
+    .listings {
+      padding: 12px 16px 80px;
+    }
+
     @media (min-width: 768px) {
       .listings {
         display: grid;
@@ -166,29 +227,44 @@
         gap: 16px;
         padding: 16px 24px 80px;
       }
-      .listing-card { margin-bottom: 0; }
+
+      .listing-card {
+        margin-bottom: 0;
+      }
     }
+
     @media (min-width: 1100px) {
-      .listings { grid-template-columns: repeat(3, 1fr); }
+      .listings {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
+
     @media (min-width: 1500px) {
-      .listings { grid-template-columns: repeat(4, 1fr); }
+      .listings {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
+
     .listing-card {
       background: #fff;
       border-radius: 14px;
       overflow: hidden;
       margin-bottom: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
       transition: opacity 0.2s;
     }
-    .listing-card.status-pass { opacity: 0.4; }
+
+    .listing-card.status-pass {
+      opacity: 0.4;
+    }
+
     .card-photo {
       width: 100%;
       height: 190px;
       object-fit: cover;
       display: block;
     }
+
     .card-photo-placeholder {
       width: 100%;
       height: 190px;
@@ -198,18 +274,71 @@
       justify-content: center;
       font-size: 2.5rem;
     }
-    .card-body { padding: 14px 16px 16px; }
-    @media (max-width: 767px) {
-      .card-photo, .card-photo-placeholder { height: 200px; }
+
+    .card-body {
+      padding: 14px 16px 16px;
     }
-    .listing-card .address { font-weight: 600; font-size: 0.95rem; color: #1a1a2e; margin-bottom: 6px; }
-    .listing-card .price { font-size: 1.2rem; font-weight: 700; color: #2e7d32; margin-bottom: 8px; }
-    .listing-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: #555; margin-bottom: 10px; }
-    .listing-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-    .dom-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
-    .dom-new   { background: #e8f5e9; color: #2e7d32; }
-    .dom-mid   { background: #fff8e1; color: #f57f17; }
-    .dom-stale { background: #ffebee; color: #c62828; }
+
+    @media (max-width: 767px) {
+
+      .card-photo,
+      .card-photo-placeholder {
+        height: 200px;
+      }
+    }
+
+    .listing-card .address {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+
+    .listing-card .price {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2e7d32;
+      margin-bottom: 8px;
+    }
+
+    .listing-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .listing-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .dom-badge {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .dom-new {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .dom-mid {
+      background: #fff8e1;
+      color: #f57f17;
+    }
+
+    .dom-stale {
+      background: #ffebee;
+      color: #c62828;
+    }
+
     .view-btn {
       background: #1a1a2e;
       color: #fff;
@@ -220,6 +349,7 @@
       font-weight: 500;
       text-decoration: none;
     }
+
     .area-tag {
       display: inline-block;
       background: #e8eaf6;
@@ -230,7 +360,48 @@
       font-weight: 500;
       margin-bottom: 6px;
     }
-    .area-count { font-size: 0.72rem; opacity: 0.7; font-weight: 400; }
+
+    .area-count {
+      font-size: 0.72rem;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .type-filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .type-filter-btn {
+      border: 1.5px solid #eee;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: #fafafa;
+      color: #555;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .type-filter-btn.active {
+      background: #1a1a2e;
+      color: #fff;
+      border-color: #1a1a2e;
+    }
+
+    .type-tag {
+      display: inline-block;
+      background: #f3e5f5;
+      color: #6a1b9a;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      margin-left: 4px;
+    }
 
     /* Action buttons */
     .action-bar {
@@ -240,6 +411,7 @@
       padding-top: 10px;
       border-top: 1px solid #f0f2f5;
     }
+
     .action-btn {
       flex: 1;
       border: 1.5px solid #eee;
@@ -252,8 +424,18 @@
       cursor: pointer;
       text-align: center;
     }
-    .action-btn.active-save { background: #fce4ec; border-color: #e91e63; color: #e91e63; }
-    .action-btn.active-pass { background: #ffebee; border-color: #c62828; color: #c62828; }
+
+    .action-btn.active-save {
+      background: #fce4ec;
+      border-color: #e91e63;
+      color: #e91e63;
+    }
+
+    .action-btn.active-pass {
+      background: #ffebee;
+      border-color: #c62828;
+      color: #c62828;
+    }
 
     .arv-box {
       background: #f1f8e9;
@@ -265,10 +447,24 @@
       flex-wrap: wrap;
       font-size: 0.8rem;
     }
-    .arv-box .arv-item { color: #555; }
-    .arv-box .arv-item strong { color: #2e7d32; }
-    .arv-box .profit-positive { color: #2e7d32; font-weight: 700; }
-    .arv-box .profit-negative { color: #c62828; font-weight: 700; }
+
+    .arv-box .arv-item {
+      color: #555;
+    }
+
+    .arv-box .arv-item strong {
+      color: #2e7d32;
+    }
+
+    .arv-box .profit-positive {
+      color: #2e7d32;
+      font-weight: 700;
+    }
+
+    .arv-box .profit-negative {
+      color: #c62828;
+      font-weight: 700;
+    }
 
     .price-drop-badge {
       display: inline-block;
@@ -281,10 +477,17 @@
       margin-bottom: 6px;
     }
 
-    .no-results { padding: 60px 16px; text-align: center; color: #aaa; }
+    .no-results {
+      padding: 60px 16px;
+      text-align: center;
+      color: #aaa;
+    }
+
     .pagination-bar {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       background: #fff;
       border-top: 1px solid #eee;
       padding: 10px 16px;
@@ -293,6 +496,7 @@
       justify-content: space-between;
       z-index: 100;
     }
+
     .page-btn {
       background: #fff;
       color: #1a1a2e;
@@ -303,263 +507,291 @@
       font-weight: 600;
       text-decoration: none;
     }
-    .page-btn.disabled { background: #fff; color: #ccc; border-color: #e0e0e0; pointer-events: none; }
-    .page-info { font-size: 0.85rem; color: #555; font-weight: 500; }
+
+    .page-btn.disabled {
+      background: #fff;
+      color: #ccc;
+      border-color: #e0e0e0;
+      pointer-events: none;
+    }
+
+    .page-info {
+      font-size: 0.85rem;
+      color: #555;
+      font-weight: 500;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- Top bar -->
-<div class="topbar">
-  <div>
-    <div class="topbar-title">
-      🏠 Deal Finder
-      {% if active_tab != 'all' %}
+  <!-- Top bar -->
+  <div class="topbar">
+    <div>
+      <a href="/" class="topbar-title">
+        🏠 Deal Finder
+        {% if active_tab != 'all' %}
         {% for s in searches %}{% if s.id|string == active_tab %}<span class="active-area-pill">{{ s.label.replace(' flips','') }}</span>{% endif %}{% endfor %}
-      {% endif %}
-    </div>
-    <div class="topbar-sub">Illinois · Under $300K</div>
-  </div>
-  <button class="filter-btn" onclick="openDrawer()">
-    ⚙ Filters
-    {% if active_tab != 'all' %}<span class="badge">●</span>{% endif %}
-  </button>
-</div>
-
-<!-- Overlay -->
-<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-
-<!-- Drawer -->
-<div class="drawer" id="drawer">
-  <div class="drawer-header">
-    <h6>Filters</h6>
-    <button class="close-btn" onclick="closeDrawer()">✕</button>
-  </div>
-  <div class="drawer-section">
-    <div class="drawer-section-title">Area</div>
-    <div class="area-options">
-      <a href="?tab=all&sort={{ sort }}" class="area-option {% if active_tab == 'all' %}active{% endif %}">
-        🗺 All<br><span class="area-count">{{ counts.values()|sum }}</span>
+        {% endif %}
       </a>
-      {% for search in searches %}
-      <a href="?tab={{ search.id }}&sort={{ sort }}" class="area-option {% if active_tab == search.id|string %}active{% endif %}">
-        {{ search.label.replace(' flips', '') }}<br>
-        <span class="area-count">{{ counts.get(search.id, 0) }}</span>
-      </a>
-      {% endfor %}
+      <div class="topbar-sub">Illinois · Under $300K</div>
+    </div>
+    <button class="filter-btn" onclick="openDrawer()">
+      ⚙ Filters
+      {% if active_tab != 'all' %}<span class="badge">●</span>{% endif %}
+    </button>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+  <!-- Drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h6>Filters</h6>
+      <button class="close-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Area</div>
+      <div class="area-options">
+        <a href="?tab=all&sort={{ sort }}{% for t in active_types %}&type={{ t }}{% endfor %}" class="area-option {% if active_tab == 'all' %}active{% endif %}">
+          🗺 All
+          <span class="area-count">{{ counts.values()|sum }}</span>
+        </a>
+        {% for search in searches %}
+        <a href="?tab={{ search.id }}&sort={{ sort }}{% for t in active_types %}&type={{ t }}{% endfor %}"
+          class="area-option {% if active_tab == search.id|string %}active{% endif %}">
+          {{ search.label.replace(' flips', '') }}
+          <span class="area-count">{{ counts.get(search.id, 0) }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-title">Property Type</div>
+      <div class="type-filter-options">
+        {% set types = [("🏠", "Single Family"), ("🏢", "Condo"), ("🏘", "Townhouse"), ("🏗", "Multi-Family"), ("🏗", "Multi-Family 5+"), ("🌿", "Land")] %}
+        {% for icon, t in types %}
+        <a href="{{ url_for('index', tab=active_tab, sort=sort, type=(active_types|reject('equalto', t)|list if t in active_types else active_types + [t])) }}"
+           class="type-filter-btn {% if t in active_types %}active{% endif %}">{{ icon }} {{ t }}</a>
+        {% endfor %}
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Sort bar -->
-<div class="sort-bar">
-  <span class="count-label">{{ total }} listings</span>
-  <button class="saved-filter-btn" id="savedFilterBtn" onclick="toggleSavedFilter()">🔖 Saved</button>
-  <button class="saved-filter-btn" id="dropFilterBtn" onclick="toggleDropFilter()">⬇ Drops</button>
-  <select class="sort-select" onchange="window.location='?tab={{ active_tab }}&sort='+this.value">
-    <option value="date"       {% if sort == 'date' %}selected{% endif %}>Latest</option>
-    <option value="price_asc"  {% if sort == 'price_asc' %}selected{% endif %}>Price ↑</option>
-    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price ↓</option>
-    <option value="dom_asc"    {% if sort == 'dom_asc' %}selected{% endif %}>Days ↑</option>
-    <option value="dom_desc"   {% if sort == 'dom_desc' %}selected{% endif %}>Days ↓</option>
-  </select>
-</div>
+  <!-- Sort bar -->
+  <div class="sort-bar">
+    <span class="count-label" id="countLabel">{{ total }} listings</span>
+    <button class="saved-filter-btn" id="savedFilterBtn" onclick="toggleSavedFilter()">♥ Saved</button>
+    <button class="saved-filter-btn" id="dropFilterBtn" onclick="toggleDropFilter()">⬇ Drops</button>
+    <select class="sort-select" onchange="window.location='?tab={{ active_tab }}&sort='+this.value+'{% for t in active_types %}&type={{ t }}{% endfor %}'">
+      <option value="date" {% if sort=='date' %}selected{% endif %}>Latest</option>
+      <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>Price ↑</option>
+      <option value="price_desc" {% if sort=='price_desc' %}selected{% endif %}>Price ↓</option>
+      <option value="dom_asc" {% if sort=='dom_asc' %}selected{% endif %}>Days ↑</option>
+      <option value="dom_desc" {% if sort=='dom_desc' %}selected{% endif %}>Days ↓</option>
+    </select>
+  </div>
 
-<!-- Listings -->
-{% if listings %}
-<div class="listings" id="listingsContainer">
-  {% for snapshot, search in listings %}
-  <div class="listing-card"
-       id="card-{{ snapshot.zpid }}"
-       data-zpid="{{ snapshot.zpid }}"
-       data-price="{{ snapshot.price or '' }}"
-       data-address="{{ snapshot.address or '' }}"
-       data-beds="{{ snapshot.beds or '' }}"
-       data-baths="{{ snapshot.baths or '' }}"
-       data-sqft="{{ snapshot.sqft or '' }}"
-       data-url="{{ snapshot.url or '' }}"
-       data-price-drop="{{ 'true' if snapshot.price_drop else 'false' }}">
-    {% if snapshot.photo_url %}
+  <!-- Listings -->
+  {% if listings %}
+  <div class="listings" id="listingsContainer">
+    {% for snapshot, search in listings %}
+    <div class="listing-card" id="card-{{ snapshot.zpid }}" data-zpid="{{ snapshot.zpid }}"
+      data-price="{{ snapshot.price or '' }}" data-address="{{ snapshot.address or '' }}"
+      data-beds="{{ snapshot.beds or '' }}" data-baths="{{ snapshot.baths or '' }}"
+      data-sqft="{{ snapshot.sqft or '' }}" data-url="{{ snapshot.url or '' }}"
+      data-price-drop="{{ 'true' if snapshot.price_drop else 'false' }}" data-type="{{ snapshot.property_type or '' }}">
+      {% if snapshot.photo_url %}
       <img class="card-photo" src="{{ snapshot.photo_url }}" alt="{{ snapshot.address }}" loading="lazy">
-    {% else %}
+      {% else %}
       <div class="card-photo-placeholder">🏠</div>
-    {% endif %}
-    <div class="card-body">
-      <div class="area-tag">{{ search.label }}</div>
-      {% if snapshot.price_drop %}
-      <div class="price-drop-badge">⬇ ${{ "{:,.0f}".format(snapshot.price_drop) }} price drop</div>
       {% endif %}
-      <div class="address">{{ snapshot.address or 'Address unavailable' }}</div>
-      <div class="price">
-        {% if snapshot.price %}${{ "{:,.0f}".format(snapshot.price) }}{% else %}Price N/A{% endif %}
-      </div>
-      <div class="listing-meta">
-        {% if snapshot.beds %}<span>🛏 {{ snapshot.beds }} bed</span>{% endif %}
-        {% if snapshot.baths %}<span>🚿 {{ snapshot.baths }} bath</span>{% endif %}
-        {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
-        <span>📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
-      </div>
-      {% if snapshot.arv_estimate %}
-      <div class="arv-box">
-        <div class="arv-item">ARV <strong>${{ "{:,.0f}".format(snapshot.arv_estimate) }}</strong></div>
-        {% if snapshot.estimated_profit is not none %}
-        <div class="arv-item">
-          Est. Profit
-          {% if snapshot.estimated_profit >= 0 %}
+      <div class="card-body">
+        <div class="area-tag">{{ search.label }}</div>
+        {% if snapshot.property_type %}<span class="type-tag">{{ snapshot.property_type }}</span>{% endif %}
+        {% if snapshot.price_drop %}
+        <div class="price-drop-badge">⬇ ${{ "{:,.0f}".format(snapshot.price_drop) }} price drop</div>
+        {% endif %}
+        <div class="address">{{ snapshot.address or 'Address unavailable' }}</div>
+        <div class="price">
+          {% if snapshot.price %}${{ "{:,.0f}".format(snapshot.price) }}{% else %}Price N/A{% endif %}
+        </div>
+        <div class="listing-meta">
+          {% if snapshot.beds %}<span>🛏 {{ snapshot.beds }} bed</span>{% endif %}
+          {% if snapshot.baths %}<span>🚿 {{ snapshot.baths }} bath</span>{% endif %}
+          {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
+          <span>📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
+        </div>
+        {% if snapshot.arv_estimate %}
+        <div class="arv-box">
+          <div class="arv-item">ARV <strong>${{ "{:,.0f}".format(snapshot.arv_estimate) }}</strong></div>
+          {% if snapshot.estimated_profit is not none %}
+          <div class="arv-item">
+            Est. Profit
+            {% if snapshot.estimated_profit >= 0 %}
             <span class="profit-positive">+${{ "{:,.0f}".format(snapshot.estimated_profit) }}</span>
-          {% else %}
-            <span class="profit-negative">-${{ "{:,.0f}".format(snapshot.estimated_profit|abs) }}</span>
-          {% endif %}
-        </div>
-        {% endif %}
-        <div class="arv-item" style="color:#aaa">rehab est. $30/sqft</div>
-      </div>
-      {% endif %}
-      <div class="listing-footer">
-        <div>
-          {% if snapshot.days_on_market is not none %}
-            {% if snapshot.days_on_market <= 7 %}
-              <span class="dom-badge dom-new">🟢 {{ snapshot.days_on_market }}d — New</span>
-            {% elif snapshot.days_on_market <= 30 %}
-              <span class="dom-badge dom-mid">🟡 {{ snapshot.days_on_market }}d on market</span>
             {% else %}
-              <span class="dom-badge dom-stale">🔴 {{ snapshot.days_on_market }}d — Stale</span>
+            <span class="profit-negative">-${{ "{:,.0f}".format(snapshot.estimated_profit|abs) }}</span>
             {% endif %}
+          </div>
+          {% endif %}
+          <div class="arv-item" style="color:#aaa">rehab est. $30/sqft</div>
+        </div>
+        {% endif %}
+        <div class="listing-footer">
+          <div>
+            {% if snapshot.days_on_market is not none %}
+            {% if snapshot.days_on_market <= 7 %} <span class="dom-badge dom-new">🟢 {{ snapshot.days_on_market }}d —
+              New</span>
+              {% elif snapshot.days_on_market <= 30 %} <span class="dom-badge dom-mid">🟡 {{ snapshot.days_on_market }}d
+                on market</span>
+                {% else %}
+                <span class="dom-badge dom-stale">🔴 {{ snapshot.days_on_market }}d — Stale</span>
+                {% endif %}
+                {% endif %}
+          </div>
+          {% if snapshot.url %}
+          <a href="{{ snapshot.url }}" target="_blank" class="view-btn">View →</a>
           {% endif %}
         </div>
-        {% if snapshot.url %}
-        <a href="{{ snapshot.url }}" target="_blank" class="view-btn">View →</a>
-        {% endif %}
-      </div>
-      <!-- Action buttons -->
-      <div class="action-bar">
-        <button class="action-btn" data-action="save" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">♥</button>
-        <button class="action-btn" data-action="pass" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">❌ Pass</button>
+        <!-- Action buttons -->
+        <div class="action-bar">
+          <button class="action-btn" data-action="save" data-zpid="{{ snapshot.zpid }}"
+            onclick="setStatus(this)">♥</button>
+          <button class="action-btn" data-action="pass" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">❌
+            Pass</button>
+        </div>
       </div>
     </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
 
-{% else %}
-<div class="no-results">
-  <div style="font-size:3rem">🏡</div>
-  <div class="mt-2">No listings found for this area.</div>
-</div>
-{% endif %}
+  {% else %}
+  <div class="no-results">
+    <div style="font-size:3rem">🏡</div>
+    <div class="mt-2">No listings found for this area.</div>
+  </div>
+  {% endif %}
 
-<!-- Pagination -->
-{% if total_pages > 1 %}
-<div class="pagination-bar">
-  <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page - 1 }}"
-     class="page-btn {% if page <= 1 %}disabled{% endif %}">← Prev</a>
-  <span class="page-info">{{ page }} / {{ total_pages }}</span>
-  <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page + 1 }}"
-     class="page-btn {% if page >= total_pages %}disabled{% endif %}">Next →</a>
-</div>
-{% endif %}
+  <!-- Pagination -->
+  {% if total_pages > 1 %}
+  <div class="pagination-bar">
+    <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page - 1 }}{% for t in active_types %}&type={{ t }}{% endfor %}"
+      class="page-btn {% if page <= 1 %}disabled{% endif %}">← Prev</a>
+    <span class="page-info">{{ page }} / {{ total_pages }}</span>
+    <a href="?tab={{ active_tab }}&sort={{ sort }}&page={{ page + 1 }}{% for t in active_types %}&type={{ t }}{% endfor %}"
+      class="page-btn {% if page >= total_pages %}disabled{% endif %}">Next →</a>
+  </div>
+  {% endif %}
 
-<script>
-  // ── Drawer ──────────────────────────────────────────
-  function openDrawer() {
-    document.getElementById('drawer').classList.add('open');
-    document.getElementById('overlay').classList.add('open');
-  }
-  function closeDrawer() {
-    document.getElementById('drawer').classList.remove('open');
-    document.getElementById('overlay').classList.remove('open');
-  }
-  document.querySelectorAll('.area-option').forEach(el =>
-    el.addEventListener('click', closeDrawer)
-  );
-
-  // ── localStorage status ─────────────────────────────
-  const STATUS_KEY = 'deal_status';
-
-  function getStatuses() {
-    return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}');
-  }
-
-  function setStatus(btn) {
-    const zpid   = btn.dataset.zpid;
-    const action = btn.dataset.action;
-    const statuses = getStatuses();
-    const current  = statuses[zpid];
-
-    // Toggle off if same action clicked again
-    if (current === action) {
-      delete statuses[zpid];
-    } else {
-      statuses[zpid] = action;
+  <script>
+    // ── Drawer ──────────────────────────────────────────
+    function openDrawer() {
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('overlay').classList.add('open');
     }
-    localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
-    applyStatuses();
-  }
+    function closeDrawer() {
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }
+    document.querySelectorAll('.area-option').forEach(el =>
+      el.addEventListener('click', closeDrawer)
+    );
 
-  function applyStatuses() {
-    const statuses = getStatuses();
-    const showSavedOnly = localStorage.getItem('savedFilter') === 'on';
-    const showDropsOnly = localStorage.getItem('dropFilter') === 'on';
+    // ── localStorage status ─────────────────────────────
+    const STATUS_KEY = 'deal_status';
 
-    document.querySelectorAll('.listing-card').forEach(card => {
-      const zpid   = card.dataset.zpid;
-      const status = statuses[zpid];
-      const hasDrop = card.dataset.priceDrop === 'true';
+    function getStatuses() {
+      return JSON.parse(localStorage.getItem(STATUS_KEY) || '{}');
+    }
 
-      // Reset button styles
-      card.querySelectorAll('.action-btn').forEach(btn => {
-        btn.classList.remove('active-save', 'active-interested', 'active-pass');
+    function setStatus(btn) {
+      const zpid = btn.dataset.zpid;
+      const action = btn.dataset.action;
+      const statuses = getStatuses();
+      const current = statuses[zpid];
+
+      // Toggle off if same action clicked again
+      if (current === action) {
+        delete statuses[zpid];
+      } else {
+        statuses[zpid] = action;
+      }
+      localStorage.setItem(STATUS_KEY, JSON.stringify(statuses));
+      applyStatuses();
+    }
+
+    function applyStatuses() {
+      const statuses = getStatuses();
+      const showSavedOnly = localStorage.getItem('savedFilter') === 'on';
+      const showDropsOnly = localStorage.getItem('dropFilter') === 'on';
+      document.querySelectorAll('.listing-card').forEach(card => {
+        const zpid = card.dataset.zpid;
+        const status = statuses[zpid];
+        const hasDrop = card.dataset.priceDrop === 'true';
+
+        // Reset button styles
+        card.querySelectorAll('.action-btn').forEach(btn => {
+          btn.classList.remove('active-save', 'active-interested', 'active-pass');
+        });
+
+        // Apply active style to current status button
+        if (status) {
+          const activeBtn = card.querySelector(`[data-action="${status}"]`);
+          if (activeBtn) activeBtn.classList.add(`active-${status}`);
+        }
+
+        // Apply pass dimming
+        card.classList.toggle('status-pass', status === 'pass');
+
+        // Apply filters
+        let visible = true;
+        if (showSavedOnly && status !== 'save') visible = false;
+        if (showDropsOnly && !hasDrop) visible = false;
+        card.style.display = visible ? '' : 'none';
       });
 
-      // Apply active style to current status button
-      if (status) {
-        const activeBtn = card.querySelector(`[data-action="${status}"]`);
-        if (activeBtn) activeBtn.classList.add(`active-${status}`);
-      }
+      const visible = document.querySelectorAll('.listing-card:not([style*="display: none"])').length;
+      const total = document.querySelectorAll('.listing-card').length;
+      const label = document.getElementById('countLabel');
+      if (label) label.textContent = visible < total ? `${visible} of ${total} listings` : `${total} listings`;
+    }
 
-      // Apply pass dimming
-      card.classList.toggle('status-pass', status === 'pass');
+    // ── Saved filter toggle ─────────────────────────────
+    function toggleSavedFilter() {
+      const current = localStorage.getItem('savedFilter');
+      localStorage.setItem('savedFilter', current === 'on' ? 'off' : 'on');
+      updateSavedBtn();
+      applyStatuses();
+    }
 
-      // Apply filters
-      let visible = true;
-      if (showSavedOnly && status !== 'save') visible = false;
-      if (showDropsOnly && !hasDrop) visible = false;
-      card.style.display = visible ? '' : 'none';
-    });
-  }
+    function updateSavedBtn() {
+      const btn = document.getElementById('savedFilterBtn');
+      if (btn) btn.classList.toggle('active', localStorage.getItem('savedFilter') === 'on');
+    }
 
-  // ── Saved filter toggle ─────────────────────────────
-  function toggleSavedFilter() {
-    const current = localStorage.getItem('savedFilter');
-    localStorage.setItem('savedFilter', current === 'on' ? 'off' : 'on');
+
+    // ── Price drop filter toggle ─────────────────────────
+    function toggleDropFilter() {
+      const current = localStorage.getItem('dropFilter');
+      localStorage.setItem('dropFilter', current === 'on' ? 'off' : 'on');
+      updateDropBtn();
+      applyStatuses();
+    }
+
+    function updateDropBtn() {
+      const btn = document.getElementById('dropFilterBtn');
+      if (btn) btn.classList.toggle('active', localStorage.getItem('dropFilter') === 'on');
+    }
+
+    // ── Init on page load ───────────────────────────────
     updateSavedBtn();
-    applyStatuses();
-  }
-
-  function updateSavedBtn() {
-    const btn = document.getElementById('savedFilterBtn');
-    if (btn) btn.classList.toggle('active', localStorage.getItem('savedFilter') === 'on');
-  }
-
-  // ── Price drop filter toggle ─────────────────────────
-  function toggleDropFilter() {
-    const current = localStorage.getItem('dropFilter');
-    localStorage.setItem('dropFilter', current === 'on' ? 'off' : 'on');
     updateDropBtn();
     applyStatuses();
-  }
+  </script>
 
-  function updateDropBtn() {
-    const btn = document.getElementById('dropFilterBtn');
-    if (btn) btn.classList.toggle('active', localStorage.getItem('dropFilter') === 'on');
-  }
-
-  // ── Init on page load ───────────────────────────────
-  updateSavedBtn();
-  updateDropBtn();
-  applyStatuses();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
