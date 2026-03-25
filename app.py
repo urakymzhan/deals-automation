@@ -12,6 +12,7 @@ def index():
     searches = session.query(HomeSearch).filter_by(active=True).order_by(HomeSearch.label).all()
     active_tab = request.args.get("tab", "all")
     sort = request.args.get("sort", "date")
+    active_types = request.args.getlist("type")  # multi-value: ?type=Condo&type=Townhouse
     page = max(1, int(request.args.get("page", 1)))
 
     query = (
@@ -31,6 +32,10 @@ def index():
         if snapshot.zpid not in seen:
             seen.add(snapshot.zpid)
             listings.append((snapshot, search))
+
+    # Filter by property type (server-side, works across all pages)
+    if active_types:
+        listings = [(s, h) for s, h in listings if s.property_type in active_types]
 
     # Sort after deduplication
     if sort == "price_asc":
@@ -69,6 +74,7 @@ def index():
         searches=searches,
         listings=listings,
         active_tab=active_tab,
+        active_types=active_types,
         sort=sort,
         counts=counts,
         page=page,
