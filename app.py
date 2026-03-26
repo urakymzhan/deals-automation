@@ -1,7 +1,9 @@
+import json
 from flask import Flask, render_template, request
 from models import HomeSearch, PropertySnapshot, Session, init_db
 
 app = Flask(__name__)
+app.jinja_env.filters["fromjson"] = json.loads
 init_db()
 
 
@@ -46,6 +48,10 @@ def index():
         listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else float("inf"))
     elif sort == "dom_desc":
         listings.sort(key=lambda x: x[0].days_on_market if x[0].days_on_market is not None else -1, reverse=True)
+    elif sort == "arv_desc":
+        listings.sort(key=lambda x: x[0].estimated_profit or float("-inf"), reverse=True)
+    elif sort == "score_desc":
+        listings.sort(key=lambda x: x[0].motivation_score or 0, reverse=True)
 
     # Paginate
     per_page = 20
@@ -81,6 +87,23 @@ def index():
         total_pages=total_pages,
         total=total,
     )
+
+
+@app.route("/listing/<zpid>")
+def listing(zpid):
+    session = Session()
+    snapshot = (
+        session.query(PropertySnapshot)
+        .filter_by(zpid=zpid)
+        .order_by(PropertySnapshot.recorded_at.desc())
+        .first()
+    )
+    if not snapshot:
+        session.close()
+        return "Listing not found", 404
+    search = session.query(HomeSearch).filter_by(id=snapshot.search_id).first()
+    session.close()
+    return render_template("listing.html", snapshot=snapshot, search=search)
 
 
 if __name__ == "__main__":

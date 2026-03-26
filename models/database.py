@@ -66,10 +66,12 @@ class PropertySnapshot(Base):
     days_on_market = Column(Integer, nullable=True)
     url = Column(String, nullable=True)
     photo_url = Column(String, nullable=True)        # primary listing photo
+    photo_urls = Column(String, nullable=True)       # JSON array of all photos
     property_type = Column(String, nullable=True)    # Single Family, Condo, etc.
     arv_estimate = Column(Float, nullable=True)      # After Repair Value estimate
     estimated_profit = Column(Float, nullable=True)  # ARV - price - rehab
     price_drop = Column(Float, nullable=True)        # drop from previous snapshot (null if no drop)
+    motivation_score = Column(Integer, nullable=True) # 0-10 deal score
     recorded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
@@ -79,10 +81,12 @@ def init_db():
     import sqlalchemy
     new_cols = [
         ("photo_url", "TEXT"),
+        ("photo_urls", "TEXT"),
         ("property_type", "TEXT"),
         ("arv_estimate", "FLOAT"),
         ("estimated_profit", "FLOAT"),
         ("price_drop", "FLOAT"),
+        ("motivation_score", "INTEGER"),
     ]
     for col, col_type in new_cols:
         with engine.connect() as conn:

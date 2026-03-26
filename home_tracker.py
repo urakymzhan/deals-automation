@@ -6,6 +6,30 @@ from notifiers import notify
 REHAB_COST_PER_SQFT = 30  # light rehab default
 
 
+def calc_motivation_score(dom, price_drop, estimated_profit):
+    score = 0
+
+    # DOM: longer on market = more motivated (0-4 pts)
+    if dom is not None:
+        if dom >= 90:   score += 4
+        elif dom >= 61: score += 3
+        elif dom >= 31: score += 2
+        elif dom >= 7:  score += 1
+
+    # Price drop: any drop = motivated seller (0-2 pts)
+    if price_drop:
+        score += 2
+
+    # Profit margin: better economics = higher score (0-4 pts)
+    if estimated_profit is not None:
+        if estimated_profit >= 50000:   score += 4
+        elif estimated_profit >= 30000: score += 3
+        elif estimated_profit >= 15000: score += 2
+        elif estimated_profit >= 0:     score += 1
+
+    return score
+
+
 def check_all_home_searches():
     session = Session()
     searches = session.query(HomeSearch).filter_by(active=True).all()
@@ -77,6 +101,12 @@ def check_all_home_searches():
                 profit = arv - (parsed["price"] or 0) - rehab
                 parsed["arv_estimate"] = round(arv)
                 parsed["estimated_profit"] = round(profit)
+
+            parsed["motivation_score"] = calc_motivation_score(
+                parsed.get("days_on_market"),
+                parsed.get("price_drop"),
+                parsed.get("estimated_profit"),
+            )
 
             snapshot = PropertySnapshot(**parsed)
             session.add(snapshot)

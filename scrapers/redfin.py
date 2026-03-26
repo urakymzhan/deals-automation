@@ -1,3 +1,4 @@
+import json
 import requests
 from typing import Optional
 from config import RAPIDAPI_KEY, RAPIDAPI_HOST
@@ -159,7 +160,9 @@ def parse_property(prop: dict, search_id: int) -> dict:
     photos = home.get("photos", {})
     big_photos = photos.get("bigPhotos", [])
     small_photos = photos.get("smallPhotos", [])
-    photo_url = big_photos[0] if big_photos else (small_photos[0] if small_photos else None)
+    all_photos = big_photos or small_photos
+    photo_url = all_photos[0] if all_photos else None
+    photo_urls = json.dumps(all_photos) if all_photos else None
 
     return {
         "search_id": search_id,
@@ -172,5 +175,6 @@ def parse_property(prop: dict, search_id: int) -> dict:
         "days_on_market": dom,
         "url": url,
         "photo_url": photo_url,
+        "photo_urls": photo_urls,
         "property_type": property_type,
     }
