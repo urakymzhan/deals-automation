@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from config import DATABASE_URL
 
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 Session = sessionmaker(bind=engine)
 
 
@@ -72,6 +72,8 @@ class PropertySnapshot(Base):
     estimated_profit = Column(Float, nullable=True)  # ARV - price - rehab
     price_drop = Column(Float, nullable=True)        # drop from previous snapshot (null if no drop)
     motivation_score = Column(Integer, nullable=True) # 0-10 deal score
+    year_built = Column(Integer, nullable=True)
+    ppsf_vs_avg = Column(Float, nullable=True)        # % below neighborhood avg (negative = below avg = good)
     recorded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
@@ -87,6 +89,8 @@ def init_db():
         ("estimated_profit", "FLOAT"),
         ("price_drop", "FLOAT"),
         ("motivation_score", "INTEGER"),
+        ("year_built", "INTEGER"),
+        ("ppsf_vs_avg", "FLOAT"),
     ]
     for col, col_type in new_cols:
         with engine.connect() as conn:

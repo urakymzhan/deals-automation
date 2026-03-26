@@ -331,6 +331,8 @@
       color: #555;
       margin-bottom: 10px;
     }
+    .below-avg { color: #2e7d32; font-weight: 600; }
+    .above-avg { color: #c62828; font-weight: 600; }
 
     .listing-footer {
       display: flex;
@@ -676,10 +678,17 @@
           {% if snapshot.price %}${{ "{:,.0f}".format(snapshot.price) }}{% else %}Price N/A{% endif %}
         </div>
         <div class="listing-meta">
-          {% if snapshot.beds %}<span>🛏 {{ snapshot.beds }} bed</span>{% endif %}
-          {% if snapshot.baths %}<span>🚿 {{ snapshot.baths }} bath</span>{% endif %}
+          {% if snapshot.beds %}<span>🛏 {{ snapshot.beds }} bd</span>{% endif %}
+          {% if snapshot.baths %}<span>🚿 {{ snapshot.baths }} ba</span>{% endif %}
           {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
-          <span>📅 Found {{ snapshot.recorded_at.strftime('%b %d') }}</span>
+          {% if snapshot.year_built %}<span>🏗 {{ snapshot.year_built }}</span>{% endif %}
+          {% if snapshot.ppsf_vs_avg is not none %}
+            {% if snapshot.ppsf_vs_avg <= -10 %}
+              <span class="below-avg">▼ {{ (snapshot.ppsf_vs_avg * -1)|round(0)|int }}% below avg</span>
+            {% elif snapshot.ppsf_vs_avg >= 10 %}
+              <span class="above-avg">▲ {{ snapshot.ppsf_vs_avg|round(0)|int }}% above avg</span>
+            {% endif %}
+          {% endif %}
         </div>
         {% if snapshot.arv_estimate %}
         <div class="arv-box">

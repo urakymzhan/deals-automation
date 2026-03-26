@@ -157,6 +157,8 @@ def parse_property(prop: dict, search_id: int) -> dict:
     }
     property_type = property_type_map.get(home.get("propertyType"), "Other")
 
+    year_built = home.get("yearBuilt", {}).get("yearBuilt")
+
     photos = home.get("photos", {})
     big_photos = photos.get("bigPhotos", [])
     small_photos = photos.get("smallPhotos", [])
@@ -177,4 +179,5 @@ def parse_property(prop: dict, search_id: int) -> dict:
         "photo_url": photo_url,
         "photo_urls": photo_urls,
         "property_type": property_type,
+        "year_built": year_built,
     }

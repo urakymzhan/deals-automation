@@ -94,6 +94,11 @@ def check_all_home_searches():
                 if prev and prev.price and parsed["price"] < prev.price:
                     parsed["price_drop"] = round(prev.price - parsed["price"])
 
+            # Price/sqft vs neighborhood average
+            if avg_ppsf and parsed.get("price") and parsed.get("sqft"):
+                listing_ppsf = parsed["price"] / parsed["sqft"]
+                parsed["ppsf_vs_avg"] = round((listing_ppsf - avg_ppsf) / avg_ppsf * 100, 1)
+
             # Calculate ARV and estimated profit if we have comps and sqft
             if avg_ppsf and parsed.get("sqft"):
                 arv = avg_ppsf * parsed["sqft"]

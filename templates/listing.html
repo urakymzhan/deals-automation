@@ -180,8 +180,19 @@
         <div class="value">
           {% if snapshot.price and snapshot.sqft %}
             ${{ "{:,.0f}".format(snapshot.price / snapshot.sqft) }}
+            {% if snapshot.ppsf_vs_avg is not none %}
+              {% if snapshot.ppsf_vs_avg <= -10 %}
+                <span style="color:#2e7d32;font-size:0.8rem"> ▼ {{ (snapshot.ppsf_vs_avg * -1)|round(0)|int }}% below avg</span>
+              {% elif snapshot.ppsf_vs_avg >= 10 %}
+                <span style="color:#c62828;font-size:0.8rem"> ▲ {{ snapshot.ppsf_vs_avg|round(0)|int }}% above avg</span>
+              {% endif %}
+            {% endif %}
           {% else %}—{% endif %}
         </div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Year Built</div>
+        <div class="value">{{ snapshot.year_built or '—' }}</div>
       </div>
     </div>
   </div>
