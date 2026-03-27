@@ -1,13 +1,68 @@
 import json
-from flask import Flask, render_template, request
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from supabase import create_client
 from models import HomeSearch, PropertySnapshot, Session, init_db
+from config import SUPABASE_URL, SUPABASE_ANON_KEY, FLASK_SECRET_KEY
 
 app = Flask(__name__)
+app.secret_key = FLASK_SECRET_KEY
 app.jinja_env.filters["fromjson"] = json.loads
+supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 init_db()
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if "user" in session:
+        return redirect(url_for("index"))
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        try:
+            res = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            session["user"] = {"id": res.user.id, "email": res.user.email}
+            return redirect(url_for("index"))
+        except Exception as e:
+            flash(str(e), "error")
+    return render_template("login.html", mode="login")
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if "user" in session:
+        return redirect(url_for("index"))
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        try:
+            res = supabase.auth.sign_up({"email": email, "password": password})
+            if res.user:
+                session["user"] = {"id": res.user.id, "email": res.user.email}
+                return redirect(url_for("index"))
+            flash("Check your email to confirm your account.", "info")
+        except Exception as e:
+            flash(str(e), "error")
+    return render_template("login.html", mode="signup")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
 @app.route("/")
+@login_required
 def index():
     session = Session()
 
@@ -90,6 +145,7 @@ def index():
 
 
 @app.route("/listing/<zpid>")
+@login_required
 def listing(zpid):
     session = Session()
     snapshot = (
