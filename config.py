@@ -25,3 +25,8 @@ NOTIFICATION_METHOD = os.getenv("NOTIFICATION_METHOD", "email")
 # RapidAPI
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
 RAPIDAPI_HOST = os.getenv("RAPIDAPI_HOST", "")
+
+# Auth
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
+FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
