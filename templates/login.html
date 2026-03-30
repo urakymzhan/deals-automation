@@ -3,150 +3,791 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% if mode == 'signup' %}Sign Up{% else %}Sign In{% endif %} — FlipRadar</title>
+  <title>FlipRadar — Find Chicago Flip Deals Before Anyone Else</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f0f2f5;
+    :root {
+      --navy: #0f0f23;
+      --navy2: #1a1a3e;
+      --purple: #6366f1;
+      --teal: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
     }
 
-    /* ── Left panel ── */
-    .hero {
-      display: none;
-      background: #1a1a2e;
-      flex-direction: column;
-      justify-content: center;
-      padding: 60px 48px;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,15,35,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+    }
+
+    .nav-logo {
+      font-size: 1.15rem;
+      font-weight: 800;
       color: #fff;
-      position: relative;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+    .nav-cta {
+      background: var(--purple);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: #4f46e5; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      padding: 80px 24px 0;
+      text-align: center;
       overflow: hidden;
+      position: relative;
     }
 
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.25) 0%, transparent 65%),
-                  radial-gradient(ellipse at 80% 20%, rgba(16,185,129,0.15) 0%, transparent 55%);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(16,185,129,0.15) 0%, transparent 50%);
       pointer-events: none;
     }
 
-    .hero-logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
       position: relative;
     }
 
-    .hero-tagline {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 52px;
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #fff;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
       position: relative;
     }
 
-    .hero-headline {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1.25;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    .hero-headline span {
-      background: linear-gradient(135deg, #6ee7b7, #6366f1);
+    .hero h1 .accent {
+      background: linear-gradient(135deg, #6ee7b7 0%, #6366f1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .hero-desc {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.6);
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: rgba(255,255,255,0.55);
+      max-width: 520px;
+      margin: 0 auto 36px;
       line-height: 1.6;
-      max-width: 340px;
-      margin-bottom: 48px;
       position: relative;
     }
 
-    .feature-list {
-      list-style: none;
+    .hero-btns {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
-      position: relative;
-    }
-
-    .feature-list li {
-      display: flex;
-      align-items: center;
       gap: 12px;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.85);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 64px;
+      position: relative;
     }
 
-    .feature-icon {
-      width: 32px;
-      height: 32px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .btn-primary {
+      background: var(--purple);
+      color: #fff;
       font-size: 1rem;
-      flex-shrink: 0;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: -0.2px;
+    }
+    .btn-primary:hover { background: #4f46e5; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.13); }
+
+    /* ── APP MOCKUP ── */
+    .mockup-wrapper {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
     }
 
-    /* ── Right panel (form) ── */
-    .form-panel {
-      flex: 1;
+    .mockup-glow {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 80px;
+      background: rgba(99,102,241,0.4);
+      filter: blur(40px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .mockup-browser {
+      background: #1e1e3a;
+      border-radius: 16px 16px 0 0;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-bottom: none;
+      overflow: hidden;
+      box-shadow: 0 -8px 60px rgba(0,0,0,0.5);
+    }
+
+    .browser-bar {
+      background: #16162c;
+      padding: 10px 16px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px 24px;
-      min-height: 100vh;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
-    .mobile-logo {
-      font-size: 1.5rem;
+    .browser-dots {
+      display: flex;
+      gap: 5px;
+    }
+    .browser-dots span {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+      font-family: monospace;
+    }
+
+    .mock-app {
+      background: #f0f2f5;
+      min-height: 420px;
+    }
+
+    .mock-topbar {
+      background: #1a1a2e;
+      padding: 0 16px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mock-topbar-logo {
+      font-size: 0.85rem;
       font-weight: 800;
-      color: #1a1a2e;
-      margin-bottom: 4px;
-      letter-spacing: -0.5px;
+      color: #fff;
     }
 
-    .mobile-tagline {
-      font-size: 0.8rem;
-      color: #999;
-      margin-bottom: 32px;
+    .mock-topbar-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
 
-    .card {
+    .mock-pill {
+      background: rgba(99,102,241,0.2);
+      color: #a5b4fc;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .mock-avatar {
+      width: 26px;
+      height: 26px;
+      background: var(--purple);
+      border-radius: 50%;
+    }
+
+    .mock-sortbar {
       background: #fff;
-      border-radius: 20px;
-      padding: 32px 28px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
     }
 
-    .card-title {
-      font-size: 1.25rem;
+    .mock-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #555;
+    }
+
+    .mock-sort-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mock-sort-btn {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .mock-sort-btn.active { background: #1a1a2e; color: #fff; }
+    .mock-sort-btn.inactive { background: #f0f2f5; color: #999; }
+
+    .mock-grid {
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .mock-grid { grid-template-columns: 1fr; }
+    }
+
+    .mock-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .mock-photo {
+      height: 90px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mock-photo-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-start;
+      padding: 6px;
+      gap: 4px;
+    }
+
+    .mock-tag {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .mock-tag-area { background: rgba(26,26,46,0.75); color: #fff; }
+    .mock-tag-score-hot { background: rgba(239,68,68,0.85); color: #fff; }
+    .mock-tag-score-good { background: rgba(245,158,11,0.85); color: #fff; }
+    .mock-tag-drop { background: rgba(16,185,129,0.85); color: #fff; }
+
+    .mock-card-body {
+      padding: 8px 10px;
+    }
+
+    .mock-addr {
+      font-size: 0.7rem;
       font-weight: 700;
       color: #1a1a2e;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mock-price {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #2e7d32;
+      margin-bottom: 4px;
+    }
+
+    .mock-meta {
+      display: flex;
+      gap: 8px;
       margin-bottom: 6px;
     }
 
-    .card-subtitle {
-      font-size: 0.82rem;
+    .mock-meta-item {
+      font-size: 0.62rem;
       color: #999;
-      margin-bottom: 28px;
+    }
+
+    .mock-arv-box {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 5px 7px;
+    }
+
+    .mock-arv-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+    }
+
+    .mock-arv-label { color: #999; }
+    .mock-arv-val { font-weight: 700; color: #1a1a2e; }
+    .mock-arv-profit { color: #2e7d32; }
+    .mock-arv-profit-neg { color: #c62828; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: #f8f9fb;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 24px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 0 36px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -1px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 80px 24px;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--purple);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .icon-purple { background: rgba(99,102,241,0.1); }
+    .icon-teal   { background: rgba(16,185,129,0.1); }
+    .icon-red    { background: rgba(239,68,68,0.1); }
+    .icon-yellow { background: rgba(245,158,11,0.1); }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: var(--navy);
+      padding: 80px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .how-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 10% 50%, rgba(99,102,241,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 90% 50%, rgba(16,185,129,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .how-inner {
+      max-width: 840px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .how-section .section-label { color: #a5b4fc; }
+    .how-section .section-title { color: #fff; }
+    .how-section .section-sub { color: rgba(255,255,255,0.5); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(50% / 3 + 28px);
+      right: calc(50% / 3 + 28px);
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 24px;
+    }
+
+    .step-num {
+      width: 56px;
+      height: 56px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin: 0 auto 20px;
+    }
+
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+
+    /* ── SAMPLE LISTING SECTION ── */
+    .sample-section {
+      padding: 80px 24px;
+      background: #f8f9fb;
+    }
+
+    .sample-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .sample-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .sample-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .sample-card:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      transform: translateY(-3px);
+    }
+
+    .sample-photo {
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sample-photo-tags {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .stag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+    .stag-area { background: rgba(26,26,46,0.75); color: #fff; backdrop-filter: blur(4px); }
+    .stag-hot { background: #ef4444; color: #fff; }
+    .stag-drop { background: #10b981; color: #fff; }
+    .stag-good { background: #f59e0b; color: #fff; }
+
+    .sample-dom {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .sample-body {
+      padding: 16px;
+    }
+
+    .sample-addr {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .sample-price {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #2e7d32;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .sample-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sample-meta span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .sample-arv {
+      background: #f0faf4;
+      border: 1px solid #d1fae5;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .sample-arv-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .sample-arv-row:last-child { margin-bottom: 0; }
+
+    .arv-label { font-size: 0.75rem; color: var(--muted); }
+    .arv-val { font-size: 0.75rem; font-weight: 700; color: var(--text); }
+    .arv-profit { color: #2e7d32; font-size: 0.85rem; font-weight: 800; }
+
+    /* blur/lock overlay on last card */
+    .sample-card-locked {
+      position: relative;
+    }
+    .sample-card-locked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.4);
+      border-radius: 16px;
+    }
+    .lock-badge {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .lock-icon { font-size: 1.8rem; }
+    .lock-text {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+    }
+    .lock-btn {
+      background: var(--purple);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    /* ── AUTH SECTION ── */
+    .auth-section {
+      padding: 80px 24px 100px;
+      background: #fff;
+    }
+
+    .auth-inner {
+      max-width: 460px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .auth-inner .section-title { margin-bottom: 8px; }
+    .auth-inner .section-sub { margin: 0 auto 36px; }
+
+    .auth-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      text-align: left;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 24px;
+      gap: 2px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .auth-tab.active {
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
 
     .flash {
@@ -158,10 +799,10 @@
     .flash-error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
     .flash-info  { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
 
-    .field { margin-bottom: 18px; }
+    .field { margin-bottom: 16px; }
     .field label {
       display: block;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #555;
       margin-bottom: 6px;
@@ -174,20 +815,20 @@
       border-radius: 12px;
       padding: 12px 14px;
       font-size: 0.95rem;
-      color: #1a1a2e;
+      color: var(--text);
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
       background: #fafafa;
     }
     .field input:focus {
-      border-color: #1a1a2e;
+      border-color: var(--purple);
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(26,26,46,0.06);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
     }
 
     .submit-btn {
       width: 100%;
-      background: #1a1a2e;
+      background: var(--navy);
       color: #fff;
       border: none;
       border-radius: 12px;
@@ -196,122 +837,462 @@
       font-weight: 700;
       cursor: pointer;
       margin-top: 4px;
-      letter-spacing: 0.2px;
       transition: background 0.15s, transform 0.1s;
     }
     .submit-btn:hover { background: #2d2d4e; }
     .submit-btn:active { transform: scale(0.99); }
 
-    .divider {
+    /* ── FOOTER ── */
+    .footer-links {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 22px 0;
-      color: #ccc;
-      font-size: 0.78rem;
+      gap: 24px;
+      justify-content: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
     }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #eee;
-    }
-
-    .switch {
-      text-align: center;
-      font-size: 0.83rem;
-      color: #999;
-    }
-    .switch a {
-      color: #1a1a2e;
-      font-weight: 700;
+    .footer-links a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
       text-decoration: none;
+      transition: color 0.15s;
     }
-    .switch a:hover { text-decoration: underline; }
+    .footer-links a:hover { color: rgba(255,255,255,0.65); }
 
-    /* Desktop: show hero panel */
-    @media (min-width: 800px) {
-      .hero { display: flex; flex: 0 0 45%; }
-      .mobile-logo, .mobile-tagline { display: none; }
-      .form-panel { background: #f0f2f5; }
+    footer {
+      background: var(--navy);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .footer-sub {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .stat-item { padding: 12px 16px; border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:last-child { border-bottom: none; }
+      .stats-bar { flex-direction: column; }
+      .steps { gap: 32px; }
+      .steps::before { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero / branding panel (desktop only) -->
-  <div class="hero">
-    <div class="hero-logo">📡 FlipRadar</div>
-    <div class="hero-tagline">Chicago Area · Flip Deal Finder</div>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">📡 FlipRadar</div>
+    <div class="nav-actions">
+      <a href="#auth" class="nav-link">Sign In</a>
+      <a href="/signup" class="nav-cta">Get Access</a>
+    </div>
+  </nav>
 
-    <div class="hero-headline">Find your next<br><span>flip deal</span><br>before anyone else.</div>
-    <div class="hero-desc">FlipRadar monitors Redfin listings daily and ranks them by profit potential, motivation score, and price drops — so you can act fast.</div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span>🏙</span> Chicago Area · Flip Deal Finder
+    </div>
+    <h1>Find your next flip deal<br><span class="accent">before anyone else.</span></h1>
+    <p class="hero-sub">FlipRadar scans the market daily, ranks every listing by profit potential, and surfaces motivated sellers — so you spend time making offers, not searching.</p>
+    <div class="hero-btns">
+      <a href="/signup" class="btn-primary">Get Free Access →</a>
+      <a href="#how" class="btn-secondary">See how it works</a>
+    </div>
 
-    <ul class="feature-list">
-      <li>
-        <div class="feature-icon">🔥</div>
-        Motivation score based on DOM, price drops &amp; profit
-      </li>
-      <li>
-        <div class="feature-icon">💰</div>
-        ARV &amp; estimated flip profit on every listing
-      </li>
-      <li>
-        <div class="feature-icon">📉</div>
-        Price drop alerts — catch motivated sellers
-      </li>
-      <li>
-        <div class="feature-icon">🗺</div>
-        Multi-area tracking across Chicago zip codes
-      </li>
-    </ul>
-  </div>
-
-  <!-- Form panel -->
-  <div class="form-panel">
-    <div class="mobile-logo">📡 FlipRadar</div>
-    <div class="mobile-tagline">Chicago Area · Flip Deal Finder</div>
-
-    <div class="card">
-      {% if mode == 'signup' %}
-        <div class="card-title">Create your account</div>
-        <div class="card-subtitle">Start finding flip deals today.</div>
-      {% else %}
-        <div class="card-title">Welcome back</div>
-        <div class="card-subtitle">Sign in to see today's deals.</div>
-      {% endif %}
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-          <div class="flash flash-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      {% endwith %}
-
-      <form method="POST">
-        <div class="field">
-          <label>Email</label>
-          <input type="email" name="email" placeholder="you@example.com" required autofocus/>
+    <!-- Browser Mockup -->
+    <div class="mockup-wrapper">
+      <div class="mockup-glow"></div>
+      <div class="mockup-browser">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="browser-url">flipradar.app/dashboard</div>
         </div>
-        <div class="field">
-          <label>Password</label>
-          <input type="password" name="password" placeholder="••••••••" required minlength="6"/>
+        <div class="mock-app">
+          <div class="mock-topbar">
+            <div class="mock-topbar-logo">📡 FlipRadar</div>
+            <div class="mock-topbar-right">
+              <div class="mock-pill">Chicago flips</div>
+              <div class="mock-avatar"></div>
+            </div>
+          </div>
+          <div class="mock-sortbar">
+            <div class="mock-count">24 listings found</div>
+            <div class="mock-sort-btns">
+              <span class="mock-sort-btn active">Best Deal</span>
+              <span class="mock-sort-btn inactive">Price ↑</span>
+              <span class="mock-sort-btn inactive">Newest</span>
+            </div>
+          </div>
+          <div class="mock-grid">
+
+            <!-- Card 1 -->
+            <div class="mock-card">
+              <div class="mock-photo" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="mock-photo-overlay">
+                  <span class="mock-tag mock-tag-area">Logan Sq</span>
+                  <span class="mock-tag mock-tag-score-hot">🔥 Hot</span>
+                  <span class="mock-tag mock-tag-drop">📉 -$15k</span>
+                </div>
+              </div>
+              <div class="mock-card-body">
+                <div class="mock-addr">2347 N Milwaukee Ave</div>
+                <div class="mock-price">$229,000</div>
+                <div class="mock-meta">
+                  <span class="mock-meta-item">3 bd</span>
+                  <span class="mock-meta-item">1 ba</span>
+                  <span class="mock-meta-item">1,240 sqft</span>
+                </div>
+                <div class="mock-arv-box">
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">ARV</span>
+                    <span class="mock-arv-val">$348,000</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Rehab</span>
+                    <span class="mock-arv-val">$37,200</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Est. Profit</span>
+                    <span class="mock-arv-val mock-arv-profit">+$81,800</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="mock-card">
+              <div class="mock-photo" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="mock-photo-overlay">
+                  <span class="mock-tag mock-tag-area">Pilsen</span>
+                  <span class="mock-tag mock-tag-score-hot">⚡ Good</span>
+                </div>
+              </div>
+              <div class="mock-card-body">
+                <div class="mock-addr">1819 S Halsted St</div>
+                <div class="mock-price">$185,000</div>
+                <div class="mock-meta">
+                  <span class="mock-meta-item">2 bd</span>
+                  <span class="mock-meta-item">1 ba</span>
+                  <span class="mock-meta-item">980 sqft</span>
+                </div>
+                <div class="mock-arv-box">
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">ARV</span>
+                    <span class="mock-arv-val">$295,000</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Rehab</span>
+                    <span class="mock-arv-val">$29,400</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Est. Profit</span>
+                    <span class="mock-arv-val mock-arv-profit">+$80,600</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="mock-card">
+              <div class="mock-photo" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="mock-photo-overlay">
+                  <span class="mock-tag mock-tag-area">Bridgeport</span>
+                  <span class="mock-tag mock-tag-score-hot">🔥 Hot</span>
+                  <span class="mock-tag mock-tag-drop">📉 -$8k</span>
+                </div>
+              </div>
+              <div class="mock-card-body">
+                <div class="mock-addr">3312 S Halsted St</div>
+                <div class="mock-price">$198,500</div>
+                <div class="mock-meta">
+                  <span class="mock-meta-item">3 bd</span>
+                  <span class="mock-meta-item">2 ba</span>
+                  <span class="mock-meta-item">1,480 sqft</span>
+                </div>
+                <div class="mock-arv-box">
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">ARV</span>
+                    <span class="mock-arv-val">$325,000</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Rehab</span>
+                    <span class="mock-arv-val">$44,400</span>
+                  </div>
+                  <div class="mock-arv-row">
+                    <span class="mock-arv-label">Est. Profit</span>
+                    <span class="mock-arv-val mock-arv-profit">+$82,100</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-        <button class="submit-btn" type="submit">
-          {% if mode == 'signup' %}Create Account{% else %}Sign In{% endif %}
-        </button>
-      </form>
-
-      <div class="divider">or</div>
-
-      <div class="switch">
-        {% if mode == 'signup' %}
-          Already have an account? <a href="/login">Sign in</a>
-        {% else %}
-          Don't have an account? <a href="/signup">Sign up free</a>
-        {% endif %}
       </div>
     </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">Daily</div>
+      <div class="stat-label">Automated scanning</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">Listings ranked per run</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">ARV</div>
+      <div class="stat-label">Profit estimate on every deal</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Manual searching required</div>
+    </div>
   </div>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="section-label">What you get</div>
+    <h2 class="section-title">Everything a flipper needs,<br>in one dashboard.</h2>
+    <p class="section-sub">Stop scrolling listing sites manually. FlipRadar does the legwork and surfaces only the deals worth your attention.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-red">🔥</div>
+        <div class="feature-title">Motivation Score</div>
+        <div class="feature-desc">Every listing gets a score based on days on market, price drops, and estimated profit. Hot deals float to the top automatically.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-teal">💰</div>
+        <div class="feature-title">Flip Profit Calculator</div>
+        <div class="feature-desc">ARV estimate, rehab cost at $30/sqft, and net profit are calculated on every single listing — no spreadsheet needed.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-purple">📉</div>
+        <div class="feature-title">Price Drop Alerts</div>
+        <div class="feature-desc">Listings that have dropped in price are flagged with the exact reduction. Catch motivated sellers before other investors do.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-yellow">🗺</div>
+        <div class="feature-title">Multi-Area Tracking</div>
+        <div class="feature-desc">Track multiple Chicago zip codes simultaneously. Filter and compare deals across Logan Square, Pilsen, Bridgeport, and more.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-teal">❤️</div>
+        <div class="feature-title">Save &amp; Pass</div>
+        <div class="feature-desc">Bookmark deals to revisit later or pass on properties you've already reviewed. Your status persists across sessions.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap icon-purple">📊</div>
+        <div class="feature-title">Price Per Sqft vs. Avg</div>
+        <div class="feature-desc">See how each listing's price per square foot compares to the neighborhood average — instantly spot below-market buys.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how">
+    <div class="how-inner">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">From scan to offer in minutes.</h2>
+      <p class="section-sub">FlipRadar runs automatically so you wake up to a ranked list of deals every morning.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🔍</div>
+          <div class="step-title">Daily Market Scan</div>
+          <div class="step-desc">Every morning FlipRadar automatically pulls new listings across your tracked Chicago zip codes and checks for price changes.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">⚡</div>
+          <div class="step-title">Ranked by Deal Quality</div>
+          <div class="step-desc">Each listing is scored on profit potential, motivation signals, and price history. The best flips rise to the top.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">🚀</div>
+          <div class="step-title">You Act First</div>
+          <div class="step-desc">Open your dashboard, review today's ranked deals, and reach out to the top opportunities before anyone else.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAMPLE LISTINGS PREVIEW -->
+  <section class="sample-section">
+    <div class="sample-inner">
+      <div class="section-label">Sample deals</div>
+      <h2 class="section-title">This is what you'll see inside.</h2>
+      <p class="section-sub" style="margin-bottom:40px">Real-time ranked listings with full flip analysis. Sign up to unlock today's actual deals.</p>
+
+      <div class="sample-cards">
+
+        <!-- Sample Card 1 -->
+        <div class="sample-card">
+          <div class="sample-photo" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="sample-photo-tags">
+              <span class="stag stag-area">Logan Square</span>
+              <span class="stag stag-hot">🔥 Hot</span>
+              <span class="stag stag-drop">📉 -$15k</span>
+            </div>
+            <div class="sample-dom">🕐 18 days on market</div>
+          </div>
+          <div class="sample-body">
+            <div class="sample-addr">2347 N Milwaukee Ave, Chicago</div>
+            <div class="sample-price">$229,000</div>
+            <div class="sample-meta">
+              <span>3 bd</span>
+              <span>1 ba</span>
+              <span>1,240 sqft</span>
+              <span>Built 1924</span>
+            </div>
+            <div class="sample-arv">
+              <div class="sample-arv-row">
+                <span class="arv-label">After Repair Value (ARV)</span>
+                <span class="arv-val">$348,000</span>
+              </div>
+              <div class="sample-arv-row">
+                <span class="arv-label">Rehab Estimate</span>
+                <span class="arv-val">$37,200</span>
+              </div>
+              <div class="sample-arv-row">
+                <span class="arv-label">Estimated Flip Profit</span>
+                <span class="arv-profit">+$81,800</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Card 2 -->
+        <div class="sample-card">
+          <div class="sample-photo" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="sample-photo-tags">
+              <span class="stag stag-area">Pilsen</span>
+              <span class="stag stag-good">⚡ Good</span>
+            </div>
+            <div class="sample-dom">🕐 7 days on market</div>
+          </div>
+          <div class="sample-body">
+            <div class="sample-addr">1819 S Halsted St, Chicago</div>
+            <div class="sample-price">$185,000</div>
+            <div class="sample-meta">
+              <span>2 bd</span>
+              <span>1 ba</span>
+              <span>980 sqft</span>
+              <span>Built 1910</span>
+            </div>
+            <div class="sample-arv">
+              <div class="sample-arv-row">
+                <span class="arv-label">After Repair Value (ARV)</span>
+                <span class="arv-val">$295,000</span>
+              </div>
+              <div class="sample-arv-row">
+                <span class="arv-label">Rehab Estimate</span>
+                <span class="arv-val">$29,400</span>
+              </div>
+              <div class="sample-arv-row">
+                <span class="arv-label">Estimated Flip Profit</span>
+                <span class="arv-profit">+$80,600</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Card 3 — Blurred/Locked -->
+        <div class="sample-card sample-card-locked">
+          <div class="sample-photo" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="sample-photo-tags">
+              <span class="stag stag-area">Bridgeport</span>
+              <span class="stag stag-hot">🔥 Hot</span>
+            </div>
+          </div>
+          <div class="sample-body">
+            <div class="sample-addr">3312 S Halsted St, Chicago</div>
+            <div class="sample-price">$198,500</div>
+            <div class="sample-meta">
+              <span>3 bd</span>
+              <span>2 ba</span>
+              <span>1,480 sqft</span>
+            </div>
+            <div class="sample-arv">
+              <div class="sample-arv-row">
+                <span class="arv-label">Est. Flip Profit</span>
+                <span class="arv-profit">+$82,100</span>
+              </div>
+            </div>
+          </div>
+          <div class="lock-badge">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-text">22 more deals<br>waiting for you</div>
+            <a href="/signup" class="lock-btn">Unlock Free →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH SECTION -->
+  <section class="auth-section" id="auth">
+    <div class="auth-inner">
+      <div class="section-label">Get started</div>
+      <h2 class="section-title">{% if mode == 'signup' %}Create your account{% else %}Welcome back{% endif %}</h2>
+      <p class="section-sub">{% if mode == 'signup' %}Free access. Start seeing today's ranked deals in seconds.{% else %}Sign in to see today's deals.{% endif %}</p>
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <a href="/login" class="auth-tab {% if mode != 'signup' %}active{% endif %}">Sign In</a>
+          <a href="/signup" class="auth-tab {% if mode == 'signup' %}active{% endif %}">Sign Up Free</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
+
+        <form method="POST">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@example.com" required autofocus/>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required minlength="6"/>
+          </div>
+          <button class="submit-btn" type="submit">
+            {% if mode == 'signup' %}Create Account &amp; See Deals{% else %}Sign In →{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">📡 FlipRadar</div>
+    <div class="footer-sub">© 2025 FlipRadar. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
 
 </body>
 </html>
