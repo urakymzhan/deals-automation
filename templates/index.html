@@ -30,10 +30,6 @@
       text-decoration: none;
     }
 
-    .topbar-sub {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.75rem;
-    }
 
     .filter-btn {
       background: rgba(255, 255, 255, 0.15);
@@ -49,6 +45,24 @@
       gap: 6px;
     }
 
+    .filter-btn-text {
+      display: inline;
+    }
+
+    @media (max-width: 540px) {
+      .filter-btn-text {
+        display: none;
+      }
+
+      .filter-btn {
+        padding: 7px 10px;
+      }
+
+      .account-email {
+        display: none;
+      }
+    }
+
     .filter-btn .badge {
       background: #e53935;
       border-radius: 10px;
@@ -62,7 +76,7 @@
     }
 
     .account-btn {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255, 255, 255, 0.12);
       border: none;
       border-radius: 8px;
       color: #fff;
@@ -75,7 +89,10 @@
       gap: 7px;
       transition: background 0.15s;
     }
-    .account-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .account-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
 
     .account-avatar {
       width: 26px;
@@ -105,13 +122,15 @@
       right: 0;
       background: #fff;
       border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
       min-width: 200px;
       z-index: 500;
       overflow: hidden;
     }
 
-    .account-dropdown.open { display: block; }
+    .account-dropdown.open {
+      display: block;
+    }
 
     .dropdown-header {
       padding: 14px 16px 10px;
@@ -141,9 +160,19 @@
       text-decoration: none;
       transition: background 0.12s;
     }
-    .dropdown-item:hover { background: #f5f5f5; color: #1a1a2e; }
-    .dropdown-item.danger { color: #d32f2f; }
-    .dropdown-item.danger:hover { background: #ffebee; }
+
+    .dropdown-item:hover {
+      background: #f5f5f5;
+      color: #1a1a2e;
+    }
+
+    .dropdown-item.danger {
+      color: #d32f2f;
+    }
+
+    .dropdown-item.danger:hover {
+      background: #ffebee;
+    }
 
     .overlay {
       display: none;
@@ -262,10 +291,42 @@
     .sort-bar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 8px 16px;
       background: #f0f2f5;
       gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sort-bar-meta {
+      width: 100%;
+    }
+
+    .sort-bar-meta>span:first-child {
+      font-size: 1.25rem;
+      margin-right: 10px;
+    }
+
+    .sort-bar-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    @media (min-width: 541px) {
+      .sort-bar {
+        flex-wrap: nowrap;
+        padding: 8px 24px;
+      }
+
+      .sort-bar-meta {
+        width: auto;
+      }
+
+      .sort-bar-filters {
+        width: auto;
+        margin-left: auto;
+      }
     }
 
     .sort-select {
@@ -347,15 +408,24 @@
       opacity: 0.4;
     }
 
+    .card-photos-wrap {
+      position: relative;
+      height: 190px;
+    }
+
     .card-photos {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scrollbar-width: none;
       height: 190px;
-      position: relative;
+      cursor: pointer;
     }
-    .card-photos::-webkit-scrollbar { display: none; }
+
+    .card-photos::-webkit-scrollbar {
+      display: none;
+    }
+
     .card-photos img {
       min-width: 100%;
       height: 190px;
@@ -363,6 +433,7 @@
       scroll-snap-align: start;
       flex-shrink: 0;
     }
+
     .card-photo-placeholder {
       width: 100%;
       height: 190px;
@@ -373,6 +444,7 @@
       font-size: 2.5rem;
       flex-shrink: 0;
     }
+
     .photo-dots {
       position: absolute;
       bottom: 6px;
@@ -382,17 +454,31 @@
       gap: 4px;
       pointer-events: none;
     }
+
     .photo-dot {
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.5);
+      background: rgba(255, 255, 255, 0.5);
       transition: background 0.2s;
     }
-    .photo-dot.active { background: #fff; }
-    .card-body { padding: 14px 16px 16px; }
+
+    .photo-dot.active {
+      background: #fff;
+    }
+
+    .card-body {
+      padding: 14px 16px 16px;
+    }
+
     @media (max-width: 767px) {
-      .card-photos, .card-photos img, .card-photo-placeholder { height: 200px; }
+
+      .card-photos-wrap,
+      .card-photos,
+      .card-photos img,
+      .card-photo-placeholder {
+        height: 200px;
+      }
     }
 
     .listing-card .address {
@@ -403,7 +489,11 @@
       text-decoration: none;
       display: block;
     }
-    .listing-card .address:hover { text-decoration: underline; color: #1a1a2e; }
+
+    .listing-card .address:hover {
+      text-decoration: underline;
+      color: #1a1a2e;
+    }
 
     .listing-card .price {
       font-size: 1.2rem;
@@ -420,8 +510,16 @@
       color: #555;
       margin-bottom: 10px;
     }
-    .below-avg { color: #2e7d32; font-weight: 600; }
-    .above-avg { color: #c62828; font-weight: 600; }
+
+    .below-avg {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .above-avg {
+      color: #c62828;
+      font-weight: 600;
+    }
 
     .listing-footer {
       display: flex;
@@ -515,9 +613,21 @@
       margin-bottom: 6px;
       margin-left: 4px;
     }
-    .score-hot  { background: #fff3e0; color: #e65100; }
-    .score-good { background: #fffde7; color: #f9a825; }
-    .score-low  { background: #f5f5f5; color: #9e9e9e; }
+
+    .score-hot {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .score-good {
+      background: #fffde7;
+      color: #f9a825;
+    }
+
+    .score-low {
+      background: #f5f5f5;
+      color: #9e9e9e;
+    }
 
     .type-tag {
       display: inline-block;
@@ -655,18 +765,16 @@
 
   <!-- Top bar -->
   <div class="topbar">
-    <div>
-      <a href="/" class="topbar-title">
-        📡 FlipRadar
-        {% if active_tab != 'all' %}
-        {% for s in searches %}{% if s.id|string == active_tab %}<span class="active-area-pill">{{ s.label.replace(' flips','') }}</span>{% endif %}{% endfor %}
-        {% endif %}
-      </a>
-      <div class="topbar-sub">Chicago Area · Flip Deal Finder</div>
-    </div>
+    <a href="/" class="topbar-title">
+      📡 FlipRadar
+      {% if active_tab != 'all' %}
+      {% for s in searches %}{% if s.id|string == active_tab %}<span class="active-area-pill">{{ s.label.replace('
+        flips','') }}</span>{% endif %}{% endfor %}
+      {% endif %}
+    </a>
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="filter-btn" onclick="openDrawer()">
-        ⚙ Filters
+        ⚙ <span class="filter-btn-text">Filters</span>
         {% if active_tab != 'all' %}<span class="badge">●</span>{% endif %}
       </button>
       <div class="account-menu" id="accountMenu">
@@ -698,7 +806,8 @@
     <div class="drawer-section">
       <div class="drawer-section-title">Area</div>
       <div class="area-options">
-        <a href="?tab=all&sort={{ sort }}{% for t in active_types %}&type={{ t }}{% endfor %}" class="area-option {% if active_tab == 'all' %}active{% endif %}">
+        <a href="?tab=all&sort={{ sort }}{% for t in active_types %}&type={{ t }}{% endfor %}"
+          class="area-option {% if active_tab == 'all' %}active{% endif %}">
           🗺 All
           <span class="area-count">{{ counts.values()|sum }}</span>
         </a>
@@ -714,10 +823,11 @@
     <div class="drawer-section">
       <div class="drawer-section-title">Property Type</div>
       <div class="type-filter-options">
-        {% set types = [("🏠", "Single Family"), ("🏢", "Condo"), ("🏘", "Townhouse"), ("🏗", "Multi-Family"), ("🏗", "Multi-Family 5+"), ("🌿", "Land")] %}
+        {% set types = [("🏠", "Single Family"), ("🏢", "Condo"), ("🏘", "Townhouse"), ("🏗", "Multi-Family"), ("🏗",
+        "Multi-Family 5+"), ("🌿", "Land")] %}
         {% for icon, t in types %}
         <a href="{{ url_for('index', tab=active_tab, sort=sort, type=(active_types|reject('equalto', t)|list if t in active_types else active_types + [t])) }}"
-           class="type-filter-btn {% if t in active_types %}active{% endif %}">{{ icon }} {{ t }}</a>
+          class="type-filter-btn {% if t in active_types %}active{% endif %}">{{ icon }} {{ t }}</a>
         {% endfor %}
       </div>
     </div>
@@ -725,18 +835,24 @@
 
   <!-- Sort bar -->
   <div class="sort-bar">
-    <span class="count-label" id="countLabel">{{ total }} listings</span>
-    <button class="saved-filter-btn" id="savedFilterBtn" onclick="toggleSavedFilter()">♥ Saved</button>
-    <button class="saved-filter-btn" id="dropFilterBtn" onclick="toggleDropFilter()">⬇ Drops</button>
-    <select class="sort-select" onchange="window.location='?tab={{ active_tab }}&sort='+this.value+'{% for t in active_types %}&type={{ t }}{% endfor %}'">
-      <option value="date" {% if sort=='date' %}selected{% endif %}>Latest</option>
-      <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>Price ↑</option>
-      <option value="price_desc" {% if sort=='price_desc' %}selected{% endif %}>Price ↓</option>
-      <option value="dom_asc" {% if sort=='dom_asc' %}selected{% endif %}>Days ↑</option>
-      <option value="dom_desc" {% if sort=='dom_desc' %}selected{% endif %}>Days ↓</option>
-      <option value="arv_desc"   {% if sort=='arv_desc'   %}selected{% endif %}>Best Profit</option>
-      <option value="score_desc" {% if sort=='score_desc' %}selected{% endif %}>🔥 Best Deal</option>
-    </select>
+    <div class="sort-bar-meta">
+      <span>Chicago Area</span>
+      <span class="count-label" id="countLabel">{{ total }} listings</span>
+    </div>
+    <div class="sort-bar-filters">
+      <button class="saved-filter-btn" id="savedFilterBtn" onclick="toggleSavedFilter()">♥ Saved</button>
+      <button class="saved-filter-btn" id="dropFilterBtn" onclick="toggleDropFilter()">⬇ Drops</button>
+      <select class="sort-select"
+        onchange="window.location='?tab={{ active_tab }}&sort='+this.value+'{% for t in active_types %}&type={{ t }}{% endfor %}'">
+        <option value="date" {% if sort=='date' %}selected{% endif %}>Latest</option>
+        <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>Price ↑</option>
+        <option value="price_desc" {% if sort=='price_desc' %}selected{% endif %}>Price ↓</option>
+        <option value="dom_asc" {% if sort=='dom_asc' %}selected{% endif %}>Days ↑</option>
+        <option value="dom_desc" {% if sort=='dom_desc' %}selected{% endif %}>Days ↓</option>
+        <option value="arv_desc" {% if sort=='arv_desc' %}selected{% endif %}>Best Profit</option>
+        <option value="score_desc" {% if sort=='score_desc' %}selected{% endif %}>🔥 Best Deal</option>
+      </select>
+    </div>
   </div>
 
   <!-- Listings -->
@@ -748,15 +864,18 @@
       data-beds="{{ snapshot.beds or '' }}" data-baths="{{ snapshot.baths or '' }}"
       data-sqft="{{ snapshot.sqft or '' }}" data-url="{{ snapshot.url or '' }}"
       data-price-drop="{{ 'true' if snapshot.price_drop else 'false' }}" data-type="{{ snapshot.property_type or '' }}">
-      {% set photos = snapshot.photo_urls | fromjson if snapshot.photo_urls else ([snapshot.photo_url] if snapshot.photo_url else []) %}
-      <div class="card-photos" onscroll="updateDots(this)">
-        {% if photos %}
+      {% set photos = snapshot.photo_urls | fromjson if snapshot.photo_urls else ([snapshot.photo_url] if
+      snapshot.photo_url else []) %}
+      <div class="card-photos-wrap">
+        <a href="/listing/{{ snapshot.zpid }}" class="card-photos" onscroll="updateDots(this)">
+          {% if photos %}
           {% for p in photos %}
           <img src="{{ p }}" alt="{{ snapshot.address }}" loading="lazy">
           {% endfor %}
-        {% else %}
+          {% else %}
           <div class="card-photo-placeholder">🏠</div>
-        {% endif %}
+          {% endif %}
+        </a>
         {% if photos | length > 1 %}
         <div class="photo-dots">
           {% for p in photos %}<div class="photo-dot {% if loop.first %}active{% endif %}"></div>{% endfor %}
@@ -767,13 +886,13 @@
         <div class="area-tag">{{ search.label }}</div>
         {% if snapshot.property_type %}<span class="type-tag">{{ snapshot.property_type }}</span>{% endif %}
         {% if snapshot.motivation_score is not none %}
-          {% if snapshot.motivation_score >= 8 %}
-            <span class="score-badge score-hot">🔥 {{ snapshot.motivation_score }}/10</span>
-          {% elif snapshot.motivation_score >= 5 %}
-            <span class="score-badge score-good">⚡ {{ snapshot.motivation_score }}/10</span>
-          {% elif snapshot.motivation_score > 0 %}
-            <span class="score-badge score-low">{{ snapshot.motivation_score }}/10</span>
-          {% endif %}
+        {% if snapshot.motivation_score >= 8 %}
+        <span class="score-badge score-hot">🔥 {{ snapshot.motivation_score }}/10</span>
+        {% elif snapshot.motivation_score >= 5 %}
+        <span class="score-badge score-good">⚡ {{ snapshot.motivation_score }}/10</span>
+        {% elif snapshot.motivation_score > 0 %}
+        <span class="score-badge score-low">{{ snapshot.motivation_score }}/10</span>
+        {% endif %}
         {% endif %}
         {% if snapshot.price_drop %}
         <div class="price-drop-badge">⬇ ${{ "{:,.0f}".format(snapshot.price_drop) }} price drop</div>
@@ -788,12 +907,12 @@
           {% if snapshot.sqft %}<span>📐 {{ "{:,.0f}".format(snapshot.sqft) }} sqft</span>{% endif %}
           {% if snapshot.year_built %}<span>🏗 {{ snapshot.year_built }}</span>{% endif %}
           {% if snapshot.ppsf_vs_avg is not none %}
-            {% if snapshot.ppsf_vs_avg <= -10 %}
-              <span class="below-avg">▼ {{ (snapshot.ppsf_vs_avg * -1)|round(0)|int }}% below avg</span>
+          {% if snapshot.ppsf_vs_avg <= -10 %} <span class="below-avg">▼ {{ (snapshot.ppsf_vs_avg * -1)|round(0)|int }}%
+            below avg</span>
             {% elif snapshot.ppsf_vs_avg >= 10 %}
-              <span class="above-avg">▲ {{ snapshot.ppsf_vs_avg|round(0)|int }}% above avg</span>
+            <span class="above-avg">▲ {{ snapshot.ppsf_vs_avg|round(0)|int }}% above avg</span>
             {% endif %}
-          {% endif %}
+            {% endif %}
         </div>
         {% if snapshot.arv_estimate %}
         <div class="arv-box">
@@ -828,7 +947,8 @@
         <div class="action-bar">
           <button class="action-btn" data-action="save" data-zpid="{{ snapshot.zpid }}"
             onclick="setStatus(this)">♥</button>
-          <button class="action-btn" data-action="pass" data-zpid="{{ snapshot.zpid }}" onclick="setStatus(this)">❌</button>
+          <button class="action-btn" data-action="pass" data-zpid="{{ snapshot.zpid }}"
+            onclick="setStatus(this)">❌</button>
         </div>
       </div>
     </div>
@@ -855,19 +975,20 @@
 
   <script>
     // ── Account dropdown ────────────────────────────────
-    (function() {
-      const email = {{ session.user.email | tojson }};
-      const initial = email ? email[0].toUpperCase() : '?';
-      document.getElementById('accountAvatar').textContent = initial;
-      document.getElementById('accountEmailLabel').textContent = email.split('@')[0];
-    })();
+    (function () {
+      const email = {{ session.user.email | tojson
+    }};
+    const initial = email ? email[0].toUpperCase() : '?';
+    document.getElementById('accountAvatar').textContent = initial;
+    document.getElementById('accountEmailLabel').textContent = email.split('@')[0];
+    }) ();
 
     function toggleAccount(e) {
       e.stopPropagation();
       document.getElementById('accountDropdown').classList.toggle('open');
     }
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       const menu = document.getElementById('accountMenu');
       if (!menu.contains(e.target)) {
         document.getElementById('accountDropdown').classList.remove('open');
@@ -877,7 +998,7 @@
     // ── Photo strip dots ────────────────────────────────
     function updateDots(strip) {
       const index = Math.round(strip.scrollLeft / strip.offsetWidth);
-      strip.querySelectorAll('.photo-dot').forEach((dot, i) =>
+      strip.parentElement.querySelectorAll('.photo-dot').forEach((dot, i) =>
         dot.classList.toggle('active', i === index)
       );
     }

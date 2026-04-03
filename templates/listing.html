@@ -11,29 +11,103 @@
 
     .topbar {
       background: #1a1a2e;
-      padding: 14px 16px;
+      padding: 0 16px;
+      height: 52px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 200;
     }
-    .back-btn {
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      font-size: 0.9rem;
+    .topbar-title { color: #fff; font-weight: 700; font-size: 1rem; }
+
+    .account-menu { position: relative; }
+    .account-btn {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+      transition: background 0.15s;
     }
-    .back-btn:hover { color: #fff; }
-    .topbar-title { color: #fff; font-weight: 700; font-size: 1rem; flex: 1; }
+    .account-btn:hover { background: rgba(255,255,255,0.2); }
+    .account-avatar {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #6366f1, #10b981);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .account-email {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .account-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      min-width: 200px;
+      z-index: 500;
+      overflow: hidden;
+    }
+    .account-dropdown.open { display: block; }
+    .dropdown-header { padding: 14px 16px 10px; border-bottom: 1px solid #f0f0f0; }
+    .dropdown-name { font-size: 0.78rem; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; }
+    .dropdown-email { font-size: 0.75rem; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dropdown-item {
+      display: block;
+      padding: 11px 16px;
+      font-size: 0.85rem;
+      color: #333;
+      text-decoration: none;
+      transition: background 0.12s;
+    }
+    .dropdown-item:hover { background: #f5f5f5; color: #1a1a2e; }
+    .dropdown-item.danger { color: #d32f2f; }
+    .dropdown-item.danger:hover { background: #ffebee; }
+    .back-btn {
+      color: #555;
+      text-decoration: none;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+      padding: 12px 16px;
+    }
+    .back-btn:hover { color: #1a1a2e; }
 
+    .photo-wrap {
+      background: #111;
+      max-height: 420px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .listing-photo {
       width: 100%;
-      max-height: 340px;
-      object-fit: cover;
+      max-height: 420px;
+      object-fit: contain;
       display: block;
     }
     .photo-placeholder {
@@ -98,8 +172,24 @@
 <body>
 
 <div class="topbar">
-  <a href="/" class="back-btn">← Back</a>
   <div class="topbar-title">📡 FlipRadar</div>
+  <div class="account-menu" id="accountMenu">
+    <button class="account-btn" onclick="toggleAccount(event)">
+      <div class="account-avatar" id="accountAvatar">?</div>
+      <span class="account-email" id="accountEmailLabel"></span>
+    </button>
+    <div class="account-dropdown" id="accountDropdown">
+      <div class="dropdown-header">
+        <div class="dropdown-name">My Account</div>
+        <div class="dropdown-email" id="dropdownEmail">{{ session.user.email }}</div>
+      </div>
+      <a href="/logout" class="dropdown-item danger">Sign out</a>
+    </div>
+  </div>
+</div>
+
+<div class="back-row">
+  <a href="/" class="back-btn">← Back to feed</a>
 </div>
 
 {% set photos = snapshot.photo_urls | fromjson if snapshot.photo_urls else ([snapshot.photo_url] if snapshot.photo_url else []) %}
@@ -108,7 +198,9 @@
   <div class="carousel-inner">
     {% for p in photos %}
     <div class="carousel-item {% if loop.first %}active{% endif %}">
-      <img src="{{ p }}" class="listing-photo d-block w-100" alt="{{ snapshot.address }}">
+      <div class="photo-wrap">
+        <img src="{{ p }}" class="listing-photo d-block" alt="{{ snapshot.address }}">
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -231,5 +323,24 @@
 
 </div>
 
+  <script>
+    (function() {
+      const email = {{ session.user.email | tojson }};
+      const initial = email ? email[0].toUpperCase() : '?';
+      document.getElementById('accountAvatar').textContent = initial;
+      document.getElementById('accountEmailLabel').textContent = email.split('@')[0];
+    })();
+
+    function toggleAccount(e) {
+      e.stopPropagation();
+      document.getElementById('accountDropdown').classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!document.getElementById('accountMenu').contains(e.target)) {
+        document.getElementById('accountDropdown').classList.remove('open');
+      }
+    });
+  </script>
 </body>
 </html>
